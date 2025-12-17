@@ -1,0 +1,599 @@
+---
+title: "Openness and Anticipated Route Separation - Code I"
+author: "Tate Helms"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Preliminary Work 
+
+```{r Libraries}
+
+library(tidyverse)
+library(nflreadr)
+library(ggplot2)
+library(gt)
+library(gtExtras)
+library(sportyR)
+library(gganimate)
+library(gifski)
+library(av)
+
+```
+
+```{r Supplementary Data}
+
+setwd("/Users/tatehelms/Downloads/Fall 2025/NFL Big Data Bowl Stuff")
+
+context_info <- read_csv("supplementary_data.csv")
+         
+```
+
+```{r Input and Output Data}
+
+setwd("/Users/tatehelms/Downloads/Fall 2025/NFL Big Data Bowl Stuff/train")
+
+input_week01 <- read_csv("input_2023_w01.csv")
+input_week02 <- read_csv("input_2023_w02.csv")
+input_week03 <- read_csv("input_2023_w03.csv")
+input_week04 <- read_csv("input_2023_w04.csv")
+input_week05 <- read_csv("input_2023_w05.csv")
+input_week06 <- read_csv("input_2023_w06.csv")
+input_week07 <- read_csv("input_2023_w07.csv")
+input_week08 <- read_csv("input_2023_w08.csv")
+input_week09 <- read_csv("input_2023_w09.csv")
+input_week10 <- read_csv("input_2023_w10.csv")
+input_week11 <- read_csv("input_2023_w11.csv")
+input_week12 <- read_csv("input_2023_w12.csv")
+input_week13 <- read_csv("input_2023_w13.csv")
+input_week14 <- read_csv("input_2023_w14.csv")
+input_week15 <- read_csv("input_2023_w15.csv")
+input_week16 <- read_csv("input_2023_w16.csv")
+input_week17 <- read_csv("input_2023_w17.csv")
+input_week18 <- read_csv("input_2023_w18.csv")
+
+output_week01 <- read_csv("output_2023_w01.csv")
+output_week02 <- read_csv("output_2023_w02.csv")
+output_week03 <- read_csv("output_2023_w03.csv")
+output_week04 <- read_csv("output_2023_w04.csv")
+output_week05 <- read_csv("output_2023_w05.csv")
+output_week06 <- read_csv("output_2023_w06.csv")
+output_week07 <- read_csv("output_2023_w07.csv")
+output_week08 <- read_csv("output_2023_w08.csv")
+output_week09 <- read_csv("output_2023_w09.csv")
+output_week10 <- read_csv("output_2023_w10.csv")
+output_week11 <- read_csv("output_2023_w11.csv")
+output_week12 <- read_csv("output_2023_w12.csv")
+output_week13 <- read_csv("output_2023_w13.csv")
+output_week14 <- read_csv("output_2023_w14.csv")
+output_week15 <- read_csv("output_2023_w15.csv")
+output_week16 <- read_csv("output_2023_w16.csv")
+output_week17 <- read_csv("output_2023_w17.csv")
+output_week18 <- read_csv("output_2023_w18.csv")
+
+```
+
+# Data Standarization 
+
+```{r Week 1 Input Data Standardization}
+
+input_week01$new_ball_land_x <- ifelse(input_week01$play_direction == "left",
+                                       120 - input_week01$ball_land_x, input_week01$ball_land_x)
+input_week01$new_ball_land_y <- ifelse(input_week01$play_direction == "left",
+                                       53.33 - input_week01$ball_land_y, input_week01$ball_land_y)
+input_week01$new_x <- ifelse(input_week01$play_direction == "left", 
+                             120 - input_week01$x, input_week01$x)
+input_week01$new_y <- ifelse(input_week01$play_direction == "left", 
+                             53.33 - input_week01$y, input_week01$y)
+input_week01$new_dir <- ifelse(input_week01$play_direction == "left", 
+                               input_week01$dir + 180, input_week01$dir)
+input_week01$new_dir <- ifelse(input_week01$new_dir > 360, 
+                               input_week01$new_dir - 360, input_week01$new_dir)
+input_week01$new_o <- ifelse(input_week01$play_direction == "left", 
+                             input_week01$o + 180, input_week01$o)
+input_week01$new_o <- ifelse(input_week01$new_o > 360, 
+                             input_week01$new_o - 360, input_week01$new_o)
+
+```
+
+```{r Week 2 Input Data Standardization}
+
+input_week02$new_ball_land_x <- ifelse(input_week02$play_direction == "left",
+                                       120 - input_week02$ball_land_x, input_week02$ball_land_x)
+input_week02$new_ball_land_y <- ifelse(input_week02$play_direction == "left",
+                                       53.33 - input_week02$ball_land_y, input_week02$ball_land_y)
+input_week02$new_x <- ifelse(input_week02$play_direction == "left", 
+                             120 - input_week02$x, input_week02$x)
+input_week02$new_y <- ifelse(input_week02$play_direction == "left", 
+                             53.33 - input_week02$y, input_week02$y)
+input_week02$new_dir <- ifelse(input_week02$play_direction == "left", 
+                               input_week02$dir + 180, input_week02$dir)
+input_week02$new_dir <- ifelse(input_week02$new_dir > 360, 
+                               input_week02$new_dir - 360, input_week02$new_dir)
+input_week02$new_o <- ifelse(input_week02$play_direction == "left", 
+                             input_week02$o + 180, input_week02$o)
+input_week02$new_o <- ifelse(input_week02$new_o > 360, 
+                             input_week02$new_o - 360, input_week02$new_o)
+
+```
+
+```{r Week 3 Input Data Standardization}
+
+input_week03$new_ball_land_x <- ifelse(input_week03$play_direction == "left",
+                                       120 - input_week03$ball_land_x, input_week03$ball_land_x)
+input_week03$new_ball_land_y <- ifelse(input_week03$play_direction == "left",
+                                       53.33 - input_week03$ball_land_y, input_week03$ball_land_y)
+input_week03$new_x <- ifelse(input_week03$play_direction == "left", 
+                             120 - input_week03$x, input_week03$x)
+input_week03$new_y <- ifelse(input_week03$play_direction == "left", 
+                             53.33 - input_week03$y, input_week03$y)
+input_week03$new_dir <- ifelse(input_week03$play_direction == "left", 
+                               input_week03$dir + 180, input_week03$dir)
+input_week03$new_dir <- ifelse(input_week03$new_dir > 360, 
+                               input_week03$new_dir - 360, input_week03$new_dir)
+input_week03$new_o <- ifelse(input_week03$play_direction == "left", 
+                             input_week03$o + 180, input_week03$o)
+input_week03$new_o <- ifelse(input_week03$new_o > 360, 
+                             input_week03$new_o - 360, input_week03$new_o)
+
+```
+
+```{r Week 4 Input Data Standardization}
+
+input_week04$new_ball_land_x <- ifelse(input_week04$play_direction == "left",
+                                       120 - input_week04$ball_land_x, input_week04$ball_land_x)
+input_week04$new_ball_land_y <- ifelse(input_week04$play_direction == "left",
+                                       53.33 - input_week04$ball_land_y, input_week04$ball_land_y)
+input_week04$new_x <- ifelse(input_week04$play_direction == "left", 
+                             120 - input_week04$x, input_week04$x)
+input_week04$new_y <- ifelse(input_week04$play_direction == "left", 
+                             53.33 - input_week04$y, input_week04$y)
+input_week04$new_dir <- ifelse(input_week04$play_direction == "left", 
+                               input_week04$dir + 180, input_week04$dir)
+input_week04$new_dir <- ifelse(input_week04$new_dir > 360, 
+                               input_week04$new_dir - 360, input_week04$new_dir)
+input_week04$new_o <- ifelse(input_week04$play_direction == "left", 
+                             input_week04$o + 180, input_week04$o)
+input_week04$new_o <- ifelse(input_week04$new_o > 360, 
+                             input_week04$new_o - 360, input_week04$new_o)
+
+```
+
+```{r Week 5 Input Data Standardization}
+
+input_week05$new_ball_land_x <- ifelse(input_week05$play_direction == "left",
+                                       120 - input_week05$ball_land_x, input_week05$ball_land_x)
+input_week05$new_ball_land_y <- ifelse(input_week05$play_direction == "left",
+                                       53.33 - input_week05$ball_land_y, input_week05$ball_land_y)
+input_week05$new_x <- ifelse(input_week05$play_direction == "left", 
+                             120 - input_week05$x, input_week05$x)
+input_week05$new_y <- ifelse(input_week05$play_direction == "left", 
+                             53.33 - input_week05$y, input_week05$y)
+input_week05$new_dir <- ifelse(input_week05$play_direction == "left", 
+                               input_week05$dir + 180, input_week05$dir)
+input_week05$new_dir <- ifelse(input_week05$new_dir > 360, 
+                               input_week05$new_dir - 360, input_week05$new_dir)
+input_week05$new_o <- ifelse(input_week05$play_direction == "left", 
+                             input_week05$o + 180, input_week05$o)
+input_week05$new_o <- ifelse(input_week05$new_o > 360, 
+                             input_week05$new_o - 360, input_week05$new_o)
+
+```
+
+```{r Week 6 Input Data Standardization}
+
+input_week06$new_ball_land_x <- ifelse(input_week06$play_direction == "left",
+                                       120 - input_week06$ball_land_x, input_week06$ball_land_x)
+input_week06$new_ball_land_y <- ifelse(input_week06$play_direction == "left",
+                                       53.33 - input_week06$ball_land_y, input_week06$ball_land_y)
+input_week06$new_x <- ifelse(input_week06$play_direction == "left", 
+                             120 - input_week06$x, input_week06$x)
+input_week06$new_y <- ifelse(input_week06$play_direction == "left", 
+                             53.33 - input_week06$y, input_week06$y)
+input_week06$new_dir <- ifelse(input_week06$play_direction == "left", 
+                               input_week06$dir + 180, input_week06$dir)
+input_week06$new_dir <- ifelse(input_week06$new_dir > 360, 
+                               input_week06$new_dir - 360, input_week06$new_dir)
+input_week06$new_o <- ifelse(input_week06$play_direction == "left", 
+                             input_week06$o + 180, input_week06$o)
+input_week06$new_o <- ifelse(input_week06$new_o > 360, 
+                             input_week06$new_o - 360, input_week06$new_o)
+
+```
+
+```{r Week 7 Input Data Standardization}
+
+input_week07$new_ball_land_x <- ifelse(input_week07$play_direction == "left",
+                                       120 - input_week07$ball_land_x, input_week07$ball_land_x)
+input_week07$new_ball_land_y <- ifelse(input_week07$play_direction == "left",
+                                       53.33 - input_week07$ball_land_y, input_week07$ball_land_y)
+input_week07$new_x <- ifelse(input_week07$play_direction == "left", 
+                             120 - input_week07$x, input_week07$x)
+input_week07$new_y <- ifelse(input_week07$play_direction == "left", 
+                             53.33 - input_week07$y, input_week07$y)
+input_week07$new_dir <- ifelse(input_week07$play_direction == "left", 
+                               input_week07$dir + 180, input_week07$dir)
+input_week07$new_dir <- ifelse(input_week07$new_dir > 360, 
+                               input_week07$new_dir - 360, input_week07$new_dir)
+input_week07$new_o <- ifelse(input_week07$play_direction == "left", 
+                             input_week07$o + 180, input_week07$o)
+input_week07$new_o <- ifelse(input_week07$new_o > 360, 
+                             input_week07$new_o - 360, input_week07$new_o)
+
+```
+
+```{r Week 8 Input Data Standardization}
+
+input_week08$new_ball_land_x <- ifelse(input_week08$play_direction == "left",
+                                       120 - input_week08$ball_land_x, input_week08$ball_land_x)
+input_week08$new_ball_land_y <- ifelse(input_week08$play_direction == "left",
+                                       53.33 - input_week08$ball_land_y, input_week08$ball_land_y)
+input_week08$new_x <- ifelse(input_week08$play_direction == "left", 
+                             120 - input_week08$x, input_week08$x)
+input_week08$new_y <- ifelse(input_week08$play_direction == "left", 
+                             53.33 - input_week08$y, input_week08$y)
+input_week08$new_dir <- ifelse(input_week08$play_direction == "left", 
+                               input_week08$dir + 180, input_week08$dir)
+input_week08$new_dir <- ifelse(input_week08$new_dir > 360, 
+                               input_week08$new_dir - 360, input_week08$new_dir)
+input_week08$new_o <- ifelse(input_week08$play_direction == "left", 
+                             input_week08$o + 180, input_week08$o)
+input_week08$new_o <- ifelse(input_week08$new_o > 360, 
+                             input_week08$new_o - 360, input_week08$new_o)
+
+```
+
+```{r Week 9 Input Data Standardization}
+
+input_week09$new_ball_land_x <- ifelse(input_week09$play_direction == "left",
+                                       120 - input_week09$ball_land_x, input_week09$ball_land_x)
+input_week09$new_ball_land_y <- ifelse(input_week09$play_direction == "left",
+                                       53.33 - input_week09$ball_land_y, input_week09$ball_land_y)
+input_week09$new_x <- ifelse(input_week09$play_direction == "left", 
+                             120 - input_week09$x, input_week09$x)
+input_week09$new_y <- ifelse(input_week09$play_direction == "left", 
+                             53.33 - input_week09$y, input_week09$y)
+input_week09$new_dir <- ifelse(input_week09$play_direction == "left", 
+                               input_week09$dir + 180, input_week09$dir)
+input_week09$new_dir <- ifelse(input_week09$new_dir > 360, 
+                               input_week09$new_dir - 360, input_week09$new_dir)
+input_week09$new_o <- ifelse(input_week09$play_direction == "left", 
+                             input_week09$o + 180, input_week09$o)
+input_week09$new_o <- ifelse(input_week09$new_o > 360, 
+                             input_week09$new_o - 360, input_week09$new_o)
+
+```
+
+```{r Week 10 Input Data Standardization}
+
+input_week10$new_ball_land_x <- ifelse(input_week10$play_direction == "left",
+                                       120 - input_week10$ball_land_x, input_week10$ball_land_x)
+input_week10$new_ball_land_y <- ifelse(input_week10$play_direction == "left",
+                                       53.33 - input_week10$ball_land_y, input_week10$ball_land_y)
+input_week10$new_x <- ifelse(input_week10$play_direction == "left", 
+                             120 - input_week10$x, input_week10$x)
+input_week10$new_y <- ifelse(input_week10$play_direction == "left", 
+                             53.33 - input_week10$y, input_week10$y)
+input_week10$new_dir <- ifelse(input_week10$play_direction == "left", 
+                               input_week10$dir + 180, input_week10$dir)
+input_week10$new_dir <- ifelse(input_week10$new_dir > 360, 
+                               input_week10$new_dir - 360, input_week10$new_dir)
+input_week10$new_o <- ifelse(input_week10$play_direction == "left", 
+                             input_week10$o + 180, input_week10$o)
+input_week10$new_o <- ifelse(input_week10$new_o > 360, 
+                             input_week10$new_o - 360, input_week10$new_o)
+
+```
+
+```{r Week 11 Input Data Standardization}
+
+input_week11$new_ball_land_x <- ifelse(input_week11$play_direction == "left",
+                                       120 - input_week11$ball_land_x, input_week11$ball_land_x)
+input_week11$new_ball_land_y <- ifelse(input_week11$play_direction == "left",
+                                       53.33 - input_week11$ball_land_y, input_week11$ball_land_y)
+input_week11$new_x <- ifelse(input_week11$play_direction == "left", 
+                             120 - input_week11$x, input_week11$x)
+input_week11$new_y <- ifelse(input_week11$play_direction == "left", 
+                             53.33 - input_week11$y, input_week11$y)
+input_week11$new_dir <- ifelse(input_week11$play_direction == "left", 
+                               input_week11$dir + 180, input_week11$dir)
+input_week11$new_dir <- ifelse(input_week11$new_dir > 360, 
+                               input_week11$new_dir - 360, input_week11$new_dir)
+input_week11$new_o <- ifelse(input_week11$play_direction == "left", 
+                             input_week11$o + 180, input_week11$o)
+input_week11$new_o <- ifelse(input_week11$new_o > 360, 
+                             input_week11$new_o - 360, input_week11$new_o)
+
+```
+
+```{r Week 12 Input Data Standardization}
+
+input_week12$new_ball_land_x <- ifelse(input_week12$play_direction == "left",
+                                       120 - input_week12$ball_land_x, input_week12$ball_land_x)
+input_week12$new_ball_land_y <- ifelse(input_week12$play_direction == "left",
+                                       53.33 - input_week12$ball_land_y, input_week12$ball_land_y)
+input_week12$new_x <- ifelse(input_week12$play_direction == "left", 
+                             120 - input_week12$x, input_week12$x)
+input_week12$new_y <- ifelse(input_week12$play_direction == "left", 
+                             53.33 - input_week12$y, input_week12$y)
+input_week12$new_dir <- ifelse(input_week12$play_direction == "left", 
+                               input_week12$dir + 180, input_week12$dir)
+input_week12$new_dir <- ifelse(input_week12$new_dir > 360, 
+                               input_week12$new_dir - 360, input_week12$new_dir)
+input_week12$new_o <- ifelse(input_week12$play_direction == "left", 
+                             input_week12$o + 180, input_week12$o)
+input_week12$new_o <- ifelse(input_week12$new_o > 360, 
+                             input_week12$new_o - 360, input_week12$new_o)
+
+```
+
+```{r Week 13 Input Data Standardization}
+
+input_week13$new_ball_land_x <- ifelse(input_week13$play_direction == "left",
+                                       120 - input_week13$ball_land_x, input_week13$ball_land_x)
+input_week13$new_ball_land_y <- ifelse(input_week13$play_direction == "left",
+                                       53.33 - input_week13$ball_land_y, input_week13$ball_land_y)
+input_week13$new_x <- ifelse(input_week13$play_direction == "left", 
+                             120 - input_week13$x, input_week13$x)
+input_week13$new_y <- ifelse(input_week13$play_direction == "left", 
+                             53.33 - input_week13$y, input_week13$y)
+input_week13$new_dir <- ifelse(input_week13$play_direction == "left", 
+                               input_week13$dir + 180, input_week13$dir)
+input_week13$new_dir <- ifelse(input_week13$new_dir > 360, 
+                               input_week13$new_dir - 360, input_week13$new_dir)
+input_week13$new_o <- ifelse(input_week13$play_direction == "left", 
+                             input_week13$o + 180, input_week13$o)
+input_week13$new_o <- ifelse(input_week13$new_o > 360, 
+                             input_week13$new_o - 360, input_week13$new_o)
+
+```
+
+```{r Week 14 Input Data Standardization}
+
+input_week14$new_ball_land_x <- ifelse(input_week14$play_direction == "left",
+                                       120 - input_week14$ball_land_x, input_week14$ball_land_x)
+input_week14$new_ball_land_y <- ifelse(input_week14$play_direction == "left",
+                                       53.33 - input_week14$ball_land_y, input_week14$ball_land_y)
+input_week14$new_x <- ifelse(input_week14$play_direction == "left", 
+                             120 - input_week14$x, input_week14$x)
+input_week14$new_y <- ifelse(input_week14$play_direction == "left", 
+                             53.33 - input_week14$y, input_week14$y)
+input_week14$new_dir <- ifelse(input_week14$play_direction == "left", 
+                               input_week14$dir + 180, input_week14$dir)
+input_week14$new_dir <- ifelse(input_week14$new_dir > 360, 
+                               input_week14$new_dir - 360, input_week14$new_dir)
+input_week14$new_o <- ifelse(input_week14$play_direction == "left", 
+                             input_week14$o + 180, input_week14$o)
+input_week14$new_o <- ifelse(input_week14$new_o > 360, 
+                             input_week14$new_o - 360, input_week14$new_o)
+
+```
+
+```{r Week 15 Input Data Standardization}
+
+input_week15$new_ball_land_x <- ifelse(input_week15$play_direction == "left",
+                                       120 - input_week15$ball_land_x, input_week15$ball_land_x)
+input_week15$new_ball_land_y <- ifelse(input_week15$play_direction == "left",
+                                       53.33 - input_week15$ball_land_y, input_week15$ball_land_y)
+input_week15$new_x <- ifelse(input_week15$play_direction == "left", 
+                             120 - input_week15$x, input_week15$x)
+input_week15$new_y <- ifelse(input_week15$play_direction == "left", 
+                             53.33 - input_week15$y, input_week15$y)
+input_week15$new_dir <- ifelse(input_week15$play_direction == "left", 
+                               input_week15$dir + 180, input_week15$dir)
+input_week15$new_dir <- ifelse(input_week15$new_dir > 360, 
+                               input_week15$new_dir - 360, input_week15$new_dir)
+input_week15$new_o <- ifelse(input_week15$play_direction == "left", 
+                             input_week15$o + 180, input_week15$o)
+input_week15$new_o <- ifelse(input_week15$new_o > 360, 
+                             input_week15$new_o - 360, input_week15$new_o)
+
+```
+
+```{r Week 16 Input Data Standardization}
+
+input_week16$new_ball_land_x <- ifelse(input_week16$play_direction == "left",
+                                       120 - input_week16$ball_land_x, input_week16$ball_land_x)
+input_week16$new_ball_land_y <- ifelse(input_week16$play_direction == "left",
+                                       53.33 - input_week16$ball_land_y, input_week16$ball_land_y)
+input_week16$new_x <- ifelse(input_week16$play_direction == "left", 
+                             120 - input_week16$x, input_week16$x)
+input_week16$new_y <- ifelse(input_week16$play_direction == "left", 
+                             53.33 - input_week16$y, input_week16$y)
+input_week16$new_dir <- ifelse(input_week16$play_direction == "left", 
+                               input_week16$dir + 180, input_week16$dir)
+input_week16$new_dir <- ifelse(input_week16$new_dir > 360, 
+                               input_week16$new_dir - 360, input_week16$new_dir)
+input_week16$new_o <- ifelse(input_week16$play_direction == "left", 
+                             input_week16$o + 180, input_week16$o)
+input_week16$new_o <- ifelse(input_week16$new_o > 360, 
+                             input_week16$new_o - 360, input_week16$new_o)
+
+```
+
+```{r Week 17 Input Data Standardization}
+
+input_week17$new_ball_land_x <- ifelse(input_week17$play_direction == "left",
+                                       120 - input_week17$ball_land_x, input_week17$ball_land_x)
+input_week17$new_ball_land_y <- ifelse(input_week17$play_direction == "left",
+                                       53.33 - input_week17$ball_land_y, input_week17$ball_land_y)
+input_week17$new_x <- ifelse(input_week17$play_direction == "left", 
+                             120 - input_week17$x, input_week17$x)
+input_week17$new_y <- ifelse(input_week17$play_direction == "left", 
+                             53.33 - input_week17$y, input_week17$y)
+input_week17$new_dir <- ifelse(input_week17$play_direction == "left", 
+                               input_week17$dir + 180, input_week17$dir)
+input_week17$new_dir <- ifelse(input_week17$new_dir > 360, 
+                               input_week17$new_dir - 360, input_week17$new_dir)
+input_week17$new_o <- ifelse(input_week17$play_direction == "left", 
+                             input_week17$o + 180, input_week17$o)
+input_week17$new_o <- ifelse(input_week17$new_o > 360, 
+                             input_week17$new_o - 360, input_week17$new_o)
+
+```
+
+```{r Week 18 Input Data Standardization}
+
+input_week18$new_ball_land_x <- ifelse(input_week18$play_direction == "left",
+                                       120 - input_week18$ball_land_x, input_week18$ball_land_x)
+input_week18$new_ball_land_y <- ifelse(input_week18$play_direction == "left",
+                                       53.33 - input_week18$ball_land_y, input_week18$ball_land_y)
+input_week18$new_x <- ifelse(input_week18$play_direction == "left", 
+                             120 - input_week18$x, input_week18$x)
+input_week18$new_y <- ifelse(input_week18$play_direction == "left", 
+                             53.33 - input_week18$y, input_week18$y)
+input_week18$new_dir <- ifelse(input_week18$play_direction == "left", 
+                               input_week18$dir + 180, input_week18$dir)
+input_week18$new_dir <- ifelse(input_week18$new_dir > 360, 
+                               input_week18$new_dir - 360, input_week18$new_dir)
+input_week18$new_o <- ifelse(input_week18$play_direction == "left", 
+                             input_week18$o + 180, input_week18$o)
+input_week18$new_o <- ifelse(input_week18$new_o > 360, 
+                             input_week18$new_o - 360, input_week18$new_o)
+
+```
+
+# Exploratory Project Work 
+
+## Metric: Time Of Throw Openness 
+
+```{r Example Sample Play TOTO}
+
+Collins_Speed <- input_week18[16393, "s"]
+Collins_x <- input_week18[16393, "new_x"]
+Collins_y <- input_week18[16393, "new_y"]
+
+Brents_Speed <- input_week18[16024, "s"]
+Brents_x <- input_week18[16024, "new_x"]
+Brents_y <- input_week18[16024, "new_y"]
+
+TOTO <- ((Collins_x - Brents_x)^2 + (Collins_y - Brents_y)^2)^(1/2) / (Collins_Speed - Brents_Speed)
+
+TOTO
+
+```
+
+## Metric: Route Openness
+
+```{r Example Sample Play Openness for Entire Route}
+
+Collins_Route_Speed <- input_week18[c(16353:16393), "s"]
+Collins_Route_x <- input_week18[c(16353:16393), "new_x"]
+Collins_Route_y <- input_week18[c(16353:16393), "new_y"]
+
+Brents_Route_Speed <- input_week18[c(15984:16024), "s"]
+Brents_Route_x <- input_week18[c(15984:16024), "new_x"]
+Brents_Route_y <- input_week18[c(15984:16024), "new_y"]
+
+TOTO_Route <- ((Collins_Route_x - Brents_Route_x)^2 + (Collins_Route_y - Brents_Route_y)^2)^(1/2) / (Collins_Route_Speed - Brents_Route_Speed)
+
+TOTO_Route
+
+plot(c(1:41), TOTO_Route$new_x)
+
+```
+
+## Metric: Anticipated Route Separation
+
+```{r Example Sample Play Anticipated Route Separation}
+
+Collins_Speed <- input_week18[16393, "s"]
+Collins_x <- input_week18[16393, "new_x"]
+Collins_y <- input_week18[16393, "new_y"]
+
+Brents_Speed <- input_week18[16024, "s"]
+Brents_x <- input_week18[16024, "new_x"]
+Brents_y <- input_week18[16024, "new_y"]
+
+Speed_Speed <- input_week18[15983, "s"]
+Speed_x <- input_week18[15983, "new_x"]
+Speed_y <- input_week18[15983, "new_y"]
+
+MooreII_Speed <- input_week18[16065, "s"]
+MooreII_x <- input_week18[16065, "new_x"]
+MooreII_y <- input_week18[16065, "new_y"]
+
+Cross_Speed <- input_week18[16106, "s"]
+Cross_x <- input_week18[16106, "new_x"]
+Cross_y <- input_week18[16106, "new_y"]
+
+Harrison_Speed <- input_week18[16147, "s"]
+Harrison_x <- input_week18[16147, "new_x"]
+Harrison_y <- input_week18[16147, "new_y"]
+
+Olubi_Speed <- input_week18[16188, "s"]
+Olubi_x <- input_week18[16188, "new_x"]
+Olubi_y <- input_week18[16188, "new_y"]
+
+Franklin_Speed <- input_week18[16229, "s"]
+Franklin_x <- input_week18[16229, "new_x"]
+Franklin_y <- input_week18[16229, "new_y"]
+
+Throw_x <- input_week18[16393, "new_ball_land_x"]
+Throw_y <- input_week18[16393, "new_ball_land_y"]
+
+Collins_Distance <- ((Throw_x - Collins_x)^2 + (Throw_y - Collins_y)^2)^(1/2)
+Brents_Distance <- ((Throw_x - Brents_x)^2 + (Throw_y - Brents_y)^2)^(1/2)
+Speed_Distance <- ((Throw_x - Speed_x)^2 + (Throw_y - Speed_y)^2)^(1/2)
+MooreII_Distance <- ((Throw_x - MooreII_x)^2 + (Throw_y - MooreII_y)^2)^(1/2)
+Cross_Distance <- ((Throw_x - Cross_x)^2 + (Throw_y - Cross_y)^2)^(1/2)
+Harrison_Distance <- ((Throw_x - Harrison_x)^2 + (Throw_y - Harrison_y)^2)^(1/2)
+Olubi_Distance <- ((Throw_x - Olubi_x)^2 + (Throw_y - Olubi_y)^2)^(1/2)
+Franklin_Distance <- ((Throw_x - Franklin_x)^2 + (Throw_y - Franklin_y)^2)^(1/2)
+
+Route_Separation_Brents <- Brents_Distance/Brents_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Speed <- Speed_Distance/Speed_Speed - Collins_Distance/Collins_Speed
+Route_Separation_MooreII <- MooreII_Distance/MooreII_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Cross <- Cross_Distance/Cross_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Harrison <- Harrison_Distance/Harrison_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Olubi <- Olubi_Distance/Olubi_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Franklin <- Franklin_Distance/Franklin_Speed - Collins_Distance/Collins_Speed
+
+Route_Separation_Brents
+Route_Separation_Speed
+Route_Separation_MooreII
+Route_Separation_Cross
+Route_Separation_Harrison
+Route_Separation_Olubi
+Route_Separation_Franklin
+
+Collins_ARS <- rbind(Route_Separation_Brents, Route_Separation_Cross, Route_Separation_Harrison, 
+                     Route_Separation_MooreII, Route_Separation_Speed, Route_Separation_Olubi,
+                     Route_Separation_Franklin)
+
+Collins_ARS
+
+```
+
+## Metric: Catch Advantage 
+
+```{r Example Sample Play Catch Advantage}
+
+Air_Time <- input_week18[16393, "num_frames_output"] * 0.1
+
+Catch_Advantage_Collins <- Air_Time - Collins_Distance/Collins_Speed
+Catch_Advantage_Brents <- Air_Time - Brents_Distance/Brents_Speed 
+Catch_Advantage_Cross <- Air_Time - Cross_Distance/Cross_Speed 
+Catch_Advantage_Harrison <- Air_Time - Harrison_Distance/Harrison_Speed 
+Catch_Advantage_MooreII <- Air_Time - MooreII_Distance/MooreII_Speed 
+Catch_Advantage_Speed <- Air_Time - Speed_Distance/Speed_Speed 
+Catch_Advantage_Olubi <- Air_Time - Olubi_Distance/Olubi_Speed 
+Catch_Advantage_Franklin <- Air_Time - Franklin_Distance/Franklin_Speed 
+
+Catch_Advantage_Collins
+Catch_Advantage_Brents
+Catch_Advantage_Cross
+Catch_Advantage_Harrison
+Catch_Advantage_MooreII
+Catch_Advantage_Speed
+Catch_Advantage_Olubi
+Catch_Advantage_Franklin
+
+Route_Separation_Brents
+Catch_Advantage_Collins - Catch_Advantage_Brents
+
+```
+
+
+
