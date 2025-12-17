@@ -486,7 +486,12 @@ TOTO_Route <- ((Collins_Route_x - Brents_Route_x)^2 + (Collins_Route_y - Brents_
 
 TOTO_Route
 
-plot(c(1:41), TOTO_Route$new_x)
+plot(c(1:41), TOTO_Route$new_x,
+     main = "Openness of Nico Collins vs. Julius Brents", 
+     xlab = "Data Frame (Each = 0.1 seconds)",
+     ylab = "Openness",
+     pch = 20,
+     col = ifelse(TOTO_Route$new_x > 0, "red", "dodgerblue2"))
 
 ```
 
@@ -1855,13 +1860,13 @@ Top_10_RB_Targets <- Outlier_Free_RB_Rankings |>
   slice(1:10) |>
   gt() |>
   tab_header(title = "Top 10 Targeted Running Backs",
-             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+             subtitle = "Based on Average ARS in the 2023 NFL Season") |>
   tab_footnote(footnote = "Minimum 30 Targets") |> 
   gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
                 domain = Outlier_Free_RB_Rankings$average_route_separation) |>
   cols_move_to_start(c(Rank)) |>
   cols_label(Rank = "Rank", player_name = "Player", possession_team = "Team", 
-             average_route_separation = "Average Route Separation")
+             average_route_separation = "Average ARS")
 
 Top_10_RB_Targets
 
@@ -1885,13 +1890,13 @@ Top_10_TE_Targets <- Outlier_Free_TE_Rankings |>
   slice(1:10) |>
   gt() |>
   tab_header(title = "Top 10 Targeted Tight Ends",
-             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+             subtitle = "Based on Average ARS in the 2023 NFL Season") |>
   tab_footnote(footnote = "Minimum 30 Targets") |> 
   gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
                 domain = Outlier_Free_TE_Rankings$average_route_separation) |>
   cols_move_to_start(c(Rank)) |>
   cols_label(Rank = "Rank", player_name = "Player", possession_team = "Team", 
-             average_route_separation = "Average Route Separation")
+             average_route_separation = "Average ARS")
 
 Top_10_TE_Targets
 
@@ -1915,13 +1920,13 @@ Top_20_WR_Targets <- Outlier_Free_WR_Rankings |>
   slice(1:20) |>
   gt() |>
   tab_header(title = "Top 20 Wide Receivers",
-             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+             subtitle = "Based on Average ARS in the 2023 NFL Season") |>
   tab_footnote(footnote = "Minimum 50 Targets") |> 
   gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
                 domain = Outlier_Free_WR_Rankings$average_route_separation) |>
   cols_move_to_start(c(Rank)) |>
   cols_label(Rank = "Rank", player_name = "Player", possession_team = "Team", 
-             average_route_separation = "Average Route Separation")
+             average_route_separation = "Average ARS")
 
 Top_20_WR_Targets
 
@@ -1951,12 +1956,12 @@ All_Teams_AVG_ARS <- Team_Rankings |>
   mutate(Rank = row_number()) |>
   gt() |>
   tab_header(title = "Team Rankings by Average ARS",
-             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+             subtitle = "Based on Average ARS in the 2023 NFL Season") |>
   gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
                 domain = Team_Rankings$average_route_separation) |>
   cols_move_to_start(c(Rank)) |>
   cols_label(Rank = "Rank", possession_team = "Team", 
-             average_route_separation = "Average Route Separation")
+             average_route_separation = "Average ARS")
 
 All_Teams_AVG_ARS 
 
@@ -2661,6 +2666,8 @@ Ranked_Teams_Wheel_Percentage <- Ranked_Teams_Cross_Percentage |>
   arrange(desc(Wheel_Percentage)) |>
   mutate(Wheel_Rank = row_number()) 
 
+Ranked_Teams_Wheel_Percentage[is.na(Ranked_Teams_Wheel_Percentage)] <- 0
+
 Ranked_Teams_Post_Percentage <- Ranked_Teams_Wheel_Percentage |>
   arrange(desc(Post_Percentage)) |>
   mutate(Post_Rank = row_number()) 
@@ -2673,22 +2680,40 @@ Ranked_Teams_In_Percentage <- Ranked_Teams_Corner_Percentage |>
   arrange(desc(In_Percentage)) |>
   mutate(In_Rank = row_number()) 
 
-Teams_Ranked <- Ranked_Teams_In_Percentage |>
-  distinct(ARS_Rank, possession_team, average_route_separation, Screen_Rank, Screen_Percentage,
-           Angle_Rank, Angle_Percentage, Flat_Rank, Flat_Percentage, In_Rank, In_Percentage) |>
+Ranked_Teams_Group_Percentages <- Ranked_Teams_In_Percentage |>
+  mutate(Underneath_Percentage = Screen_Percentage + Angle_Percentage + Flat_Percentage,
+         Quick_Percentage = Hitch_Percentage + Out_Percentage + Slant_Percentage,
+         Downfield_Percentage = Go_Percentage + Cross_Percentage + Wheel_Percentage +
+           Post_Percentage + Corner_Percentage + In_Percentage)
+
+Ranked_Teams_Underneath_Percentage <- Ranked_Teams_Group_Percentages |>
+  arrange(desc(Underneath_Percentage)) |>
+  mutate(Underneath_Rank = row_number()) 
+
+Ranked_Teams_Quick_Percentage <- Ranked_Teams_Underneath_Percentage |>
+  arrange(desc(Quick_Percentage)) |>
+  mutate(Quick_Rank = row_number()) 
+
+Ranked_Teams_Downfield_Percentage <- Ranked_Teams_Quick_Percentage |>
+  arrange(desc(Downfield_Percentage)) |>
+  mutate(Downfield_Rank = row_number()) 
+
+Teams_Ranked <- Ranked_Teams_Downfield_Percentage |>
+  distinct(ARS_Rank, possession_team, average_route_separation, Underneath_Rank,
+           Underneath_Percentage, Quick_Rank, Quick_Percentage, Downfield_Rank, 
+           Downfield_Percentage) |>
   arrange(desc(average_route_separation)) |>
   gt() |> 
-  tab_header(title = "Team Rankings by Route Concept",
-             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_header(title = "Team Rankings by Route Concept Grouping",
+             subtitle = "Based on Average ARS in the 2023 NFL Season") |>
   gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
                 domain = Ranked_Teams_In_Percentage$average_route_separation) |>
   cols_label(ARS_Rank = "ARS Rank", possession_team = "Team", 
-             average_route_separation = "Average ARS", Screen_Rank = "Screen Rank",
-             Screen_Percentage = "Percent Screens", Angle_Rank = "Angle Rank",
-             Angle_Percentage = "Percent Angles", Flat_Rank = "Flat Rank", 
-             Flat_Percentage = "Percent Flats", In_Rank = "In Rank", 
-             In_Percentage = "Percent Ins") 
-  
+             average_route_separation = "Average ARS", Underneath_Rank = "Underneath Rank",
+             Underneath_Percentage = "Underneath Routes %", Quick_Rank = "Quick Rank",
+             Quick_Percentage = "Quick Routes %", Downfield_Rank = "Downfield Rank", 
+             Downfield_Percentage = "Downfield Routes %") 
+
 Teams_Ranked
 
 ```
@@ -2797,11 +2822,11 @@ Route_Averages <- data.frame(
 Route_Averages_Table <- Route_Averages |>
   arrange(desc(AverageRouteSeparation)) |>
   gt() |>
-  tab_header(title = "Average Route Separation by Route Type",
+  tab_header(title = "Average ARS by Route Type",
              subtitle = "Using Data from the 2023 NFL Season") |>
   gt_color_rows(columns = c("AverageRouteSeparation"), palette = c("red", "green"), 
                 domain = Route_Averages$AverageRouteSeparation) |>
-  cols_label(Route = "Route", AverageRouteSeparation = "Average Route Separation")
+  cols_label(Route = "Route", AverageRouteSeparation = "Average ARS")
 
 Coverage_Averages <- data.frame(
   Coverage = c("COVER_0_MAN", "COVER_1_MAN", "COVER_2_MAN", "COVER_2_ZONE", "COVER_3_ZONE", "COVER_4_ZONE", "COVER_6_ZONE", "PREVENT"),
@@ -2811,11 +2836,11 @@ Coverage_Averages <- data.frame(
 Coverage_Averages_Table <- Coverage_Averages |>
   arrange(desc(AverageRouteSeparation)) |>
   gt() |>
-  tab_header(title = "Average Route Separation by Coverage Type",
+  tab_header(title = "Average ARS by Coverage Type",
              subtitle = "Using Data from the 2023 NFL Season") |>
   gt_color_rows(columns = c("AverageRouteSeparation"), palette = c("red", "green"), 
                 domain = Coverage_Averages$AverageRouteSeparation) |>
-  cols_label(Coverage = "Coverage", AverageRouteSeparation = "Average Route Separation")
+  cols_label(Coverage = "Coverage", AverageRouteSeparation = "Average ARS")
 
 Position_Averages <- data.frame(
   Position = c("RB", "TE", "WR"),
@@ -2825,11 +2850,11 @@ Position_Averages <- data.frame(
 Position_Averages_Table <- Position_Averages |>
   arrange(desc(AverageRouteSeparation)) |>
   gt() |>
-  tab_header(title = "Average Route Separation by Position",
+  tab_header(title = "Average ARS by Position",
              subtitle = "Using Data from the 2023 NFL Season") |>
   gt_color_rows(columns = c("AverageRouteSeparation"), palette = c("red", "green"), 
                 domain = Position_Averages$AverageRouteSeparation) |>
-  cols_label(Position = "Position", AverageRouteSeparation = "Average Route Separation")
+  cols_label(Position = "Position", AverageRouteSeparation = "Average ARS")
 
 Route_Averages_Table
 Coverage_Averages_Table
