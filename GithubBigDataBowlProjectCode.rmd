@@ -24,15 +24,11 @@ library(av)
 
 ```{r Supplementary Data}
 
-setwd("/Users/tatehelms/Downloads/Fall 2025/NFL Big Data Bowl Stuff")
-
 context_info <- read_csv("supplementary_data.csv")
          
 ```
 
 ```{r Input and Output Data}
-
-setwd("/Users/tatehelms/Downloads/Fall 2025/NFL Big Data Bowl Stuff/train")
 
 input_week01 <- read_csv("input_2023_w01.csv")
 input_week02 <- read_csv("input_2023_w02.csv")
@@ -3442,6 +3438,4 @@ Top_10_Prevent_Targets <- Outlier_Free_Prevent_Rankings |>
 Top_10_Prevent_Targets
 
 ```
-
-
 
