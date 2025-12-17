@@ -1,0 +1,3447 @@
+---
+title: "Openness and Anticipated Route Separation"
+author: "Tate Helms"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Preliminary Work 
+
+```{r Libraries}
+
+library(tidyverse)
+library(nflreadr)
+library(ggplot2)
+library(gt)
+library(gtExtras)
+library(sportyR)
+library(gganimate)
+library(gifski)
+library(av)
+
+```
+
+```{r Supplementary Data}
+
+setwd("/Users/tatehelms/Downloads/Fall 2025/NFL Big Data Bowl Stuff")
+
+context_info <- read_csv("supplementary_data.csv")
+         
+```
+
+```{r Input and Output Data}
+
+setwd("/Users/tatehelms/Downloads/Fall 2025/NFL Big Data Bowl Stuff/train")
+
+input_week01 <- read_csv("input_2023_w01.csv")
+input_week02 <- read_csv("input_2023_w02.csv")
+input_week03 <- read_csv("input_2023_w03.csv")
+input_week04 <- read_csv("input_2023_w04.csv")
+input_week05 <- read_csv("input_2023_w05.csv")
+input_week06 <- read_csv("input_2023_w06.csv")
+input_week07 <- read_csv("input_2023_w07.csv")
+input_week08 <- read_csv("input_2023_w08.csv")
+input_week09 <- read_csv("input_2023_w09.csv")
+input_week10 <- read_csv("input_2023_w10.csv")
+input_week11 <- read_csv("input_2023_w11.csv")
+input_week12 <- read_csv("input_2023_w12.csv")
+input_week13 <- read_csv("input_2023_w13.csv")
+input_week14 <- read_csv("input_2023_w14.csv")
+input_week15 <- read_csv("input_2023_w15.csv")
+input_week16 <- read_csv("input_2023_w16.csv")
+input_week17 <- read_csv("input_2023_w17.csv")
+input_week18 <- read_csv("input_2023_w18.csv")
+
+output_week01 <- read_csv("output_2023_w01.csv")
+output_week02 <- read_csv("output_2023_w02.csv")
+output_week03 <- read_csv("output_2023_w03.csv")
+output_week04 <- read_csv("output_2023_w04.csv")
+output_week05 <- read_csv("output_2023_w05.csv")
+output_week06 <- read_csv("output_2023_w06.csv")
+output_week07 <- read_csv("output_2023_w07.csv")
+output_week08 <- read_csv("output_2023_w08.csv")
+output_week09 <- read_csv("output_2023_w09.csv")
+output_week10 <- read_csv("output_2023_w10.csv")
+output_week11 <- read_csv("output_2023_w11.csv")
+output_week12 <- read_csv("output_2023_w12.csv")
+output_week13 <- read_csv("output_2023_w13.csv")
+output_week14 <- read_csv("output_2023_w14.csv")
+output_week15 <- read_csv("output_2023_w15.csv")
+output_week16 <- read_csv("output_2023_w16.csv")
+output_week17 <- read_csv("output_2023_w17.csv")
+output_week18 <- read_csv("output_2023_w18.csv")
+
+```
+
+# Data Standarization 
+
+```{r Week 1 Input Data Standardization}
+
+input_week01$new_ball_land_x <- ifelse(input_week01$play_direction == "left",
+                                       120 - input_week01$ball_land_x, input_week01$ball_land_x)
+input_week01$new_ball_land_y <- ifelse(input_week01$play_direction == "left",
+                                       53.33 - input_week01$ball_land_y, input_week01$ball_land_y)
+input_week01$new_x <- ifelse(input_week01$play_direction == "left", 
+                             120 - input_week01$x, input_week01$x)
+input_week01$new_y <- ifelse(input_week01$play_direction == "left", 
+                             53.33 - input_week01$y, input_week01$y)
+input_week01$new_dir <- ifelse(input_week01$play_direction == "left", 
+                               input_week01$dir + 180, input_week01$dir)
+input_week01$new_dir <- ifelse(input_week01$new_dir > 360, 
+                               input_week01$new_dir - 360, input_week01$new_dir)
+input_week01$new_o <- ifelse(input_week01$play_direction == "left", 
+                             input_week01$o + 180, input_week01$o)
+input_week01$new_o <- ifelse(input_week01$new_o > 360, 
+                             input_week01$new_o - 360, input_week01$new_o)
+
+```
+
+```{r Week 2 Input Data Standardization}
+
+input_week02$new_ball_land_x <- ifelse(input_week02$play_direction == "left",
+                                       120 - input_week02$ball_land_x, input_week02$ball_land_x)
+input_week02$new_ball_land_y <- ifelse(input_week02$play_direction == "left",
+                                       53.33 - input_week02$ball_land_y, input_week02$ball_land_y)
+input_week02$new_x <- ifelse(input_week02$play_direction == "left", 
+                             120 - input_week02$x, input_week02$x)
+input_week02$new_y <- ifelse(input_week02$play_direction == "left", 
+                             53.33 - input_week02$y, input_week02$y)
+input_week02$new_dir <- ifelse(input_week02$play_direction == "left", 
+                               input_week02$dir + 180, input_week02$dir)
+input_week02$new_dir <- ifelse(input_week02$new_dir > 360, 
+                               input_week02$new_dir - 360, input_week02$new_dir)
+input_week02$new_o <- ifelse(input_week02$play_direction == "left", 
+                             input_week02$o + 180, input_week02$o)
+input_week02$new_o <- ifelse(input_week02$new_o > 360, 
+                             input_week02$new_o - 360, input_week02$new_o)
+
+```
+
+```{r Week 3 Input Data Standardization}
+
+input_week03$new_ball_land_x <- ifelse(input_week03$play_direction == "left",
+                                       120 - input_week03$ball_land_x, input_week03$ball_land_x)
+input_week03$new_ball_land_y <- ifelse(input_week03$play_direction == "left",
+                                       53.33 - input_week03$ball_land_y, input_week03$ball_land_y)
+input_week03$new_x <- ifelse(input_week03$play_direction == "left", 
+                             120 - input_week03$x, input_week03$x)
+input_week03$new_y <- ifelse(input_week03$play_direction == "left", 
+                             53.33 - input_week03$y, input_week03$y)
+input_week03$new_dir <- ifelse(input_week03$play_direction == "left", 
+                               input_week03$dir + 180, input_week03$dir)
+input_week03$new_dir <- ifelse(input_week03$new_dir > 360, 
+                               input_week03$new_dir - 360, input_week03$new_dir)
+input_week03$new_o <- ifelse(input_week03$play_direction == "left", 
+                             input_week03$o + 180, input_week03$o)
+input_week03$new_o <- ifelse(input_week03$new_o > 360, 
+                             input_week03$new_o - 360, input_week03$new_o)
+
+```
+
+```{r Week 4 Input Data Standardization}
+
+input_week04$new_ball_land_x <- ifelse(input_week04$play_direction == "left",
+                                       120 - input_week04$ball_land_x, input_week04$ball_land_x)
+input_week04$new_ball_land_y <- ifelse(input_week04$play_direction == "left",
+                                       53.33 - input_week04$ball_land_y, input_week04$ball_land_y)
+input_week04$new_x <- ifelse(input_week04$play_direction == "left", 
+                             120 - input_week04$x, input_week04$x)
+input_week04$new_y <- ifelse(input_week04$play_direction == "left", 
+                             53.33 - input_week04$y, input_week04$y)
+input_week04$new_dir <- ifelse(input_week04$play_direction == "left", 
+                               input_week04$dir + 180, input_week04$dir)
+input_week04$new_dir <- ifelse(input_week04$new_dir > 360, 
+                               input_week04$new_dir - 360, input_week04$new_dir)
+input_week04$new_o <- ifelse(input_week04$play_direction == "left", 
+                             input_week04$o + 180, input_week04$o)
+input_week04$new_o <- ifelse(input_week04$new_o > 360, 
+                             input_week04$new_o - 360, input_week04$new_o)
+
+```
+
+```{r Week 5 Input Data Standardization}
+
+input_week05$new_ball_land_x <- ifelse(input_week05$play_direction == "left",
+                                       120 - input_week05$ball_land_x, input_week05$ball_land_x)
+input_week05$new_ball_land_y <- ifelse(input_week05$play_direction == "left",
+                                       53.33 - input_week05$ball_land_y, input_week05$ball_land_y)
+input_week05$new_x <- ifelse(input_week05$play_direction == "left", 
+                             120 - input_week05$x, input_week05$x)
+input_week05$new_y <- ifelse(input_week05$play_direction == "left", 
+                             53.33 - input_week05$y, input_week05$y)
+input_week05$new_dir <- ifelse(input_week05$play_direction == "left", 
+                               input_week05$dir + 180, input_week05$dir)
+input_week05$new_dir <- ifelse(input_week05$new_dir > 360, 
+                               input_week05$new_dir - 360, input_week05$new_dir)
+input_week05$new_o <- ifelse(input_week05$play_direction == "left", 
+                             input_week05$o + 180, input_week05$o)
+input_week05$new_o <- ifelse(input_week05$new_o > 360, 
+                             input_week05$new_o - 360, input_week05$new_o)
+
+```
+
+```{r Week 6 Input Data Standardization}
+
+input_week06$new_ball_land_x <- ifelse(input_week06$play_direction == "left",
+                                       120 - input_week06$ball_land_x, input_week06$ball_land_x)
+input_week06$new_ball_land_y <- ifelse(input_week06$play_direction == "left",
+                                       53.33 - input_week06$ball_land_y, input_week06$ball_land_y)
+input_week06$new_x <- ifelse(input_week06$play_direction == "left", 
+                             120 - input_week06$x, input_week06$x)
+input_week06$new_y <- ifelse(input_week06$play_direction == "left", 
+                             53.33 - input_week06$y, input_week06$y)
+input_week06$new_dir <- ifelse(input_week06$play_direction == "left", 
+                               input_week06$dir + 180, input_week06$dir)
+input_week06$new_dir <- ifelse(input_week06$new_dir > 360, 
+                               input_week06$new_dir - 360, input_week06$new_dir)
+input_week06$new_o <- ifelse(input_week06$play_direction == "left", 
+                             input_week06$o + 180, input_week06$o)
+input_week06$new_o <- ifelse(input_week06$new_o > 360, 
+                             input_week06$new_o - 360, input_week06$new_o)
+
+```
+
+```{r Week 7 Input Data Standardization}
+
+input_week07$new_ball_land_x <- ifelse(input_week07$play_direction == "left",
+                                       120 - input_week07$ball_land_x, input_week07$ball_land_x)
+input_week07$new_ball_land_y <- ifelse(input_week07$play_direction == "left",
+                                       53.33 - input_week07$ball_land_y, input_week07$ball_land_y)
+input_week07$new_x <- ifelse(input_week07$play_direction == "left", 
+                             120 - input_week07$x, input_week07$x)
+input_week07$new_y <- ifelse(input_week07$play_direction == "left", 
+                             53.33 - input_week07$y, input_week07$y)
+input_week07$new_dir <- ifelse(input_week07$play_direction == "left", 
+                               input_week07$dir + 180, input_week07$dir)
+input_week07$new_dir <- ifelse(input_week07$new_dir > 360, 
+                               input_week07$new_dir - 360, input_week07$new_dir)
+input_week07$new_o <- ifelse(input_week07$play_direction == "left", 
+                             input_week07$o + 180, input_week07$o)
+input_week07$new_o <- ifelse(input_week07$new_o > 360, 
+                             input_week07$new_o - 360, input_week07$new_o)
+
+```
+
+```{r Week 8 Input Data Standardization}
+
+input_week08$new_ball_land_x <- ifelse(input_week08$play_direction == "left",
+                                       120 - input_week08$ball_land_x, input_week08$ball_land_x)
+input_week08$new_ball_land_y <- ifelse(input_week08$play_direction == "left",
+                                       53.33 - input_week08$ball_land_y, input_week08$ball_land_y)
+input_week08$new_x <- ifelse(input_week08$play_direction == "left", 
+                             120 - input_week08$x, input_week08$x)
+input_week08$new_y <- ifelse(input_week08$play_direction == "left", 
+                             53.33 - input_week08$y, input_week08$y)
+input_week08$new_dir <- ifelse(input_week08$play_direction == "left", 
+                               input_week08$dir + 180, input_week08$dir)
+input_week08$new_dir <- ifelse(input_week08$new_dir > 360, 
+                               input_week08$new_dir - 360, input_week08$new_dir)
+input_week08$new_o <- ifelse(input_week08$play_direction == "left", 
+                             input_week08$o + 180, input_week08$o)
+input_week08$new_o <- ifelse(input_week08$new_o > 360, 
+                             input_week08$new_o - 360, input_week08$new_o)
+
+```
+
+```{r Week 9 Input Data Standardization}
+
+input_week09$new_ball_land_x <- ifelse(input_week09$play_direction == "left",
+                                       120 - input_week09$ball_land_x, input_week09$ball_land_x)
+input_week09$new_ball_land_y <- ifelse(input_week09$play_direction == "left",
+                                       53.33 - input_week09$ball_land_y, input_week09$ball_land_y)
+input_week09$new_x <- ifelse(input_week09$play_direction == "left", 
+                             120 - input_week09$x, input_week09$x)
+input_week09$new_y <- ifelse(input_week09$play_direction == "left", 
+                             53.33 - input_week09$y, input_week09$y)
+input_week09$new_dir <- ifelse(input_week09$play_direction == "left", 
+                               input_week09$dir + 180, input_week09$dir)
+input_week09$new_dir <- ifelse(input_week09$new_dir > 360, 
+                               input_week09$new_dir - 360, input_week09$new_dir)
+input_week09$new_o <- ifelse(input_week09$play_direction == "left", 
+                             input_week09$o + 180, input_week09$o)
+input_week09$new_o <- ifelse(input_week09$new_o > 360, 
+                             input_week09$new_o - 360, input_week09$new_o)
+
+```
+
+```{r Week 10 Input Data Standardization}
+
+input_week10$new_ball_land_x <- ifelse(input_week10$play_direction == "left",
+                                       120 - input_week10$ball_land_x, input_week10$ball_land_x)
+input_week10$new_ball_land_y <- ifelse(input_week10$play_direction == "left",
+                                       53.33 - input_week10$ball_land_y, input_week10$ball_land_y)
+input_week10$new_x <- ifelse(input_week10$play_direction == "left", 
+                             120 - input_week10$x, input_week10$x)
+input_week10$new_y <- ifelse(input_week10$play_direction == "left", 
+                             53.33 - input_week10$y, input_week10$y)
+input_week10$new_dir <- ifelse(input_week10$play_direction == "left", 
+                               input_week10$dir + 180, input_week10$dir)
+input_week10$new_dir <- ifelse(input_week10$new_dir > 360, 
+                               input_week10$new_dir - 360, input_week10$new_dir)
+input_week10$new_o <- ifelse(input_week10$play_direction == "left", 
+                             input_week10$o + 180, input_week10$o)
+input_week10$new_o <- ifelse(input_week10$new_o > 360, 
+                             input_week10$new_o - 360, input_week10$new_o)
+
+```
+
+```{r Week 11 Input Data Standardization}
+
+input_week11$new_ball_land_x <- ifelse(input_week11$play_direction == "left",
+                                       120 - input_week11$ball_land_x, input_week11$ball_land_x)
+input_week11$new_ball_land_y <- ifelse(input_week11$play_direction == "left",
+                                       53.33 - input_week11$ball_land_y, input_week11$ball_land_y)
+input_week11$new_x <- ifelse(input_week11$play_direction == "left", 
+                             120 - input_week11$x, input_week11$x)
+input_week11$new_y <- ifelse(input_week11$play_direction == "left", 
+                             53.33 - input_week11$y, input_week11$y)
+input_week11$new_dir <- ifelse(input_week11$play_direction == "left", 
+                               input_week11$dir + 180, input_week11$dir)
+input_week11$new_dir <- ifelse(input_week11$new_dir > 360, 
+                               input_week11$new_dir - 360, input_week11$new_dir)
+input_week11$new_o <- ifelse(input_week11$play_direction == "left", 
+                             input_week11$o + 180, input_week11$o)
+input_week11$new_o <- ifelse(input_week11$new_o > 360, 
+                             input_week11$new_o - 360, input_week11$new_o)
+
+```
+
+```{r Week 12 Input Data Standardization}
+
+input_week12$new_ball_land_x <- ifelse(input_week12$play_direction == "left",
+                                       120 - input_week12$ball_land_x, input_week12$ball_land_x)
+input_week12$new_ball_land_y <- ifelse(input_week12$play_direction == "left",
+                                       53.33 - input_week12$ball_land_y, input_week12$ball_land_y)
+input_week12$new_x <- ifelse(input_week12$play_direction == "left", 
+                             120 - input_week12$x, input_week12$x)
+input_week12$new_y <- ifelse(input_week12$play_direction == "left", 
+                             53.33 - input_week12$y, input_week12$y)
+input_week12$new_dir <- ifelse(input_week12$play_direction == "left", 
+                               input_week12$dir + 180, input_week12$dir)
+input_week12$new_dir <- ifelse(input_week12$new_dir > 360, 
+                               input_week12$new_dir - 360, input_week12$new_dir)
+input_week12$new_o <- ifelse(input_week12$play_direction == "left", 
+                             input_week12$o + 180, input_week12$o)
+input_week12$new_o <- ifelse(input_week12$new_o > 360, 
+                             input_week12$new_o - 360, input_week12$new_o)
+
+```
+
+```{r Week 13 Input Data Standardization}
+
+input_week13$new_ball_land_x <- ifelse(input_week13$play_direction == "left",
+                                       120 - input_week13$ball_land_x, input_week13$ball_land_x)
+input_week13$new_ball_land_y <- ifelse(input_week13$play_direction == "left",
+                                       53.33 - input_week13$ball_land_y, input_week13$ball_land_y)
+input_week13$new_x <- ifelse(input_week13$play_direction == "left", 
+                             120 - input_week13$x, input_week13$x)
+input_week13$new_y <- ifelse(input_week13$play_direction == "left", 
+                             53.33 - input_week13$y, input_week13$y)
+input_week13$new_dir <- ifelse(input_week13$play_direction == "left", 
+                               input_week13$dir + 180, input_week13$dir)
+input_week13$new_dir <- ifelse(input_week13$new_dir > 360, 
+                               input_week13$new_dir - 360, input_week13$new_dir)
+input_week13$new_o <- ifelse(input_week13$play_direction == "left", 
+                             input_week13$o + 180, input_week13$o)
+input_week13$new_o <- ifelse(input_week13$new_o > 360, 
+                             input_week13$new_o - 360, input_week13$new_o)
+
+```
+
+```{r Week 14 Input Data Standardization}
+
+input_week14$new_ball_land_x <- ifelse(input_week14$play_direction == "left",
+                                       120 - input_week14$ball_land_x, input_week14$ball_land_x)
+input_week14$new_ball_land_y <- ifelse(input_week14$play_direction == "left",
+                                       53.33 - input_week14$ball_land_y, input_week14$ball_land_y)
+input_week14$new_x <- ifelse(input_week14$play_direction == "left", 
+                             120 - input_week14$x, input_week14$x)
+input_week14$new_y <- ifelse(input_week14$play_direction == "left", 
+                             53.33 - input_week14$y, input_week14$y)
+input_week14$new_dir <- ifelse(input_week14$play_direction == "left", 
+                               input_week14$dir + 180, input_week14$dir)
+input_week14$new_dir <- ifelse(input_week14$new_dir > 360, 
+                               input_week14$new_dir - 360, input_week14$new_dir)
+input_week14$new_o <- ifelse(input_week14$play_direction == "left", 
+                             input_week14$o + 180, input_week14$o)
+input_week14$new_o <- ifelse(input_week14$new_o > 360, 
+                             input_week14$new_o - 360, input_week14$new_o)
+
+```
+
+```{r Week 15 Input Data Standardization}
+
+input_week15$new_ball_land_x <- ifelse(input_week15$play_direction == "left",
+                                       120 - input_week15$ball_land_x, input_week15$ball_land_x)
+input_week15$new_ball_land_y <- ifelse(input_week15$play_direction == "left",
+                                       53.33 - input_week15$ball_land_y, input_week15$ball_land_y)
+input_week15$new_x <- ifelse(input_week15$play_direction == "left", 
+                             120 - input_week15$x, input_week15$x)
+input_week15$new_y <- ifelse(input_week15$play_direction == "left", 
+                             53.33 - input_week15$y, input_week15$y)
+input_week15$new_dir <- ifelse(input_week15$play_direction == "left", 
+                               input_week15$dir + 180, input_week15$dir)
+input_week15$new_dir <- ifelse(input_week15$new_dir > 360, 
+                               input_week15$new_dir - 360, input_week15$new_dir)
+input_week15$new_o <- ifelse(input_week15$play_direction == "left", 
+                             input_week15$o + 180, input_week15$o)
+input_week15$new_o <- ifelse(input_week15$new_o > 360, 
+                             input_week15$new_o - 360, input_week15$new_o)
+
+```
+
+```{r Week 16 Input Data Standardization}
+
+input_week16$new_ball_land_x <- ifelse(input_week16$play_direction == "left",
+                                       120 - input_week16$ball_land_x, input_week16$ball_land_x)
+input_week16$new_ball_land_y <- ifelse(input_week16$play_direction == "left",
+                                       53.33 - input_week16$ball_land_y, input_week16$ball_land_y)
+input_week16$new_x <- ifelse(input_week16$play_direction == "left", 
+                             120 - input_week16$x, input_week16$x)
+input_week16$new_y <- ifelse(input_week16$play_direction == "left", 
+                             53.33 - input_week16$y, input_week16$y)
+input_week16$new_dir <- ifelse(input_week16$play_direction == "left", 
+                               input_week16$dir + 180, input_week16$dir)
+input_week16$new_dir <- ifelse(input_week16$new_dir > 360, 
+                               input_week16$new_dir - 360, input_week16$new_dir)
+input_week16$new_o <- ifelse(input_week16$play_direction == "left", 
+                             input_week16$o + 180, input_week16$o)
+input_week16$new_o <- ifelse(input_week16$new_o > 360, 
+                             input_week16$new_o - 360, input_week16$new_o)
+
+```
+
+```{r Week 17 Input Data Standardization}
+
+input_week17$new_ball_land_x <- ifelse(input_week17$play_direction == "left",
+                                       120 - input_week17$ball_land_x, input_week17$ball_land_x)
+input_week17$new_ball_land_y <- ifelse(input_week17$play_direction == "left",
+                                       53.33 - input_week17$ball_land_y, input_week17$ball_land_y)
+input_week17$new_x <- ifelse(input_week17$play_direction == "left", 
+                             120 - input_week17$x, input_week17$x)
+input_week17$new_y <- ifelse(input_week17$play_direction == "left", 
+                             53.33 - input_week17$y, input_week17$y)
+input_week17$new_dir <- ifelse(input_week17$play_direction == "left", 
+                               input_week17$dir + 180, input_week17$dir)
+input_week17$new_dir <- ifelse(input_week17$new_dir > 360, 
+                               input_week17$new_dir - 360, input_week17$new_dir)
+input_week17$new_o <- ifelse(input_week17$play_direction == "left", 
+                             input_week17$o + 180, input_week17$o)
+input_week17$new_o <- ifelse(input_week17$new_o > 360, 
+                             input_week17$new_o - 360, input_week17$new_o)
+
+```
+
+```{r Week 18 Input Data Standardization}
+
+input_week18$new_ball_land_x <- ifelse(input_week18$play_direction == "left",
+                                       120 - input_week18$ball_land_x, input_week18$ball_land_x)
+input_week18$new_ball_land_y <- ifelse(input_week18$play_direction == "left",
+                                       53.33 - input_week18$ball_land_y, input_week18$ball_land_y)
+input_week18$new_x <- ifelse(input_week18$play_direction == "left", 
+                             120 - input_week18$x, input_week18$x)
+input_week18$new_y <- ifelse(input_week18$play_direction == "left", 
+                             53.33 - input_week18$y, input_week18$y)
+input_week18$new_dir <- ifelse(input_week18$play_direction == "left", 
+                               input_week18$dir + 180, input_week18$dir)
+input_week18$new_dir <- ifelse(input_week18$new_dir > 360, 
+                               input_week18$new_dir - 360, input_week18$new_dir)
+input_week18$new_o <- ifelse(input_week18$play_direction == "left", 
+                             input_week18$o + 180, input_week18$o)
+input_week18$new_o <- ifelse(input_week18$new_o > 360, 
+                             input_week18$new_o - 360, input_week18$new_o)
+
+```
+
+# Project Work 
+
+## Metric: Time Of Throw Openness 
+
+```{r Example Sample Play TOTO}
+
+Collins_Speed <- input_week18[16393, "s"]
+Collins_x <- input_week18[16393, "new_x"]
+Collins_y <- input_week18[16393, "new_y"]
+
+Brents_Speed <- input_week18[16024, "s"]
+Brents_x <- input_week18[16024, "new_x"]
+Brents_y <- input_week18[16024, "new_y"]
+
+TOTO <- ((Collins_x - Brents_x)^2 + (Collins_y - Brents_y)^2)^(1/2) / (Collins_Speed - Brents_Speed)
+
+TOTO
+
+```
+
+## Metric: Route Openness
+
+```{r Example Sample Play Openness for Entire Route}
+
+Collins_Route_Speed <- input_week18[c(16353:16393), "s"]
+Collins_Route_x <- input_week18[c(16353:16393), "new_x"]
+Collins_Route_y <- input_week18[c(16353:16393), "new_y"]
+
+Brents_Route_Speed <- input_week18[c(15984:16024), "s"]
+Brents_Route_x <- input_week18[c(15984:16024), "new_x"]
+Brents_Route_y <- input_week18[c(15984:16024), "new_y"]
+
+TOTO_Route <- ((Collins_Route_x - Brents_Route_x)^2 + (Collins_Route_y - Brents_Route_y)^2)^(1/2) / (Collins_Route_Speed - Brents_Route_Speed)
+
+TOTO_Route
+
+plot(c(1:41), TOTO_Route$new_x)
+
+```
+
+## Metric: Anticipated Route Separation
+
+```{r Example Sample Play Anticipated Route Separation}
+
+Collins_Speed <- input_week18[16393, "s"]
+Collins_x <- input_week18[16393, "new_x"]
+Collins_y <- input_week18[16393, "new_y"]
+
+Brents_Speed <- input_week18[16024, "s"]
+Brents_x <- input_week18[16024, "new_x"]
+Brents_y <- input_week18[16024, "new_y"]
+
+Speed_Speed <- input_week18[15983, "s"]
+Speed_x <- input_week18[15983, "new_x"]
+Speed_y <- input_week18[15983, "new_y"]
+
+MooreII_Speed <- input_week18[16065, "s"]
+MooreII_x <- input_week18[16065, "new_x"]
+MooreII_y <- input_week18[16065, "new_y"]
+
+Cross_Speed <- input_week18[16106, "s"]
+Cross_x <- input_week18[16106, "new_x"]
+Cross_y <- input_week18[16106, "new_y"]
+
+Harrison_Speed <- input_week18[16147, "s"]
+Harrison_x <- input_week18[16147, "new_x"]
+Harrison_y <- input_week18[16147, "new_y"]
+
+Olubi_Speed <- input_week18[16188, "s"]
+Olubi_x <- input_week18[16188, "new_x"]
+Olubi_y <- input_week18[16188, "new_y"]
+
+Franklin_Speed <- input_week18[16229, "s"]
+Franklin_x <- input_week18[16229, "new_x"]
+Franklin_y <- input_week18[16229, "new_y"]
+
+Throw_x <- input_week18[16393, "new_ball_land_x"]
+Throw_y <- input_week18[16393, "new_ball_land_y"]
+
+Collins_Distance <- ((Throw_x - Collins_x)^2 + (Throw_y - Collins_y)^2)^(1/2)
+Brents_Distance <- ((Throw_x - Brents_x)^2 + (Throw_y - Brents_y)^2)^(1/2)
+Speed_Distance <- ((Throw_x - Speed_x)^2 + (Throw_y - Speed_y)^2)^(1/2)
+MooreII_Distance <- ((Throw_x - MooreII_x)^2 + (Throw_y - MooreII_y)^2)^(1/2)
+Cross_Distance <- ((Throw_x - Cross_x)^2 + (Throw_y - Cross_y)^2)^(1/2)
+Harrison_Distance <- ((Throw_x - Harrison_x)^2 + (Throw_y - Harrison_y)^2)^(1/2)
+Olubi_Distance <- ((Throw_x - Olubi_x)^2 + (Throw_y - Olubi_y)^2)^(1/2)
+Franklin_Distance <- ((Throw_x - Franklin_x)^2 + (Throw_y - Franklin_y)^2)^(1/2)
+
+Route_Separation_Brents <- Brents_Distance/Brents_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Speed <- Speed_Distance/Speed_Speed - Collins_Distance/Collins_Speed
+Route_Separation_MooreII <- MooreII_Distance/MooreII_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Cross <- Cross_Distance/Cross_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Harrison <- Harrison_Distance/Harrison_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Olubi <- Olubi_Distance/Olubi_Speed - Collins_Distance/Collins_Speed
+Route_Separation_Franklin <- Franklin_Distance/Franklin_Speed - Collins_Distance/Collins_Speed
+
+Route_Separation_Brents
+Route_Separation_Speed
+Route_Separation_MooreII
+Route_Separation_Cross
+Route_Separation_Harrison
+Route_Separation_Olubi
+Route_Separation_Franklin
+
+Collins_ARS <- rbind(Route_Separation_Brents, Route_Separation_Cross, Route_Separation_Harrison, 
+                     Route_Separation_MooreII, Route_Separation_Speed, Route_Separation_Olubi,
+                     Route_Separation_Franklin)
+
+Collins_ARS
+
+```
+
+## Metric: Catch Advantage 
+
+```{r Example Sample Play Catch Advantage}
+
+Air_Time <- input_week18[16393, "num_frames_output"] * 0.1
+
+Catch_Advantage_Collins <- Air_Time - Collins_Distance/Collins_Speed
+Catch_Advantage_Brents <- Air_Time - Brents_Distance/Brents_Speed 
+Catch_Advantage_Cross <- Air_Time - Cross_Distance/Cross_Speed 
+Catch_Advantage_Harrison <- Air_Time - Harrison_Distance/Harrison_Speed 
+Catch_Advantage_MooreII <- Air_Time - MooreII_Distance/MooreII_Speed 
+Catch_Advantage_Speed <- Air_Time - Speed_Distance/Speed_Speed 
+Catch_Advantage_Olubi <- Air_Time - Olubi_Distance/Olubi_Speed 
+Catch_Advantage_Franklin <- Air_Time - Franklin_Distance/Franklin_Speed 
+
+Catch_Advantage_Collins
+Catch_Advantage_Brents
+Catch_Advantage_Cross
+Catch_Advantage_Harrison
+Catch_Advantage_MooreII
+Catch_Advantage_Speed
+Catch_Advantage_Olubi
+Catch_Advantage_Franklin
+
+Route_Separation_Brents
+Catch_Advantage_Collins - Catch_Advantage_Brents
+
+```
+
+## Creating Useful Data Frames
+
+```{r Creating Week 1 Data Frames}
+
+Big_Data_Frame1 <- input_week01 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame1 <- Big_Data_Frame1 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame1 <- Big_Data_Frame1 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame1.1 <- rbind(WR_Data_Frame1, Defense_Data_Frame1) 
+
+Merged_Data_Frame1.2 <- Merged_Data_Frame1.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame1.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 1) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame1.4 <- Merged_Data_Frame1.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data01 <- full_join(Merged_Data_Frame1.4, Merged_Data_Frame1.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 2 Data Frames}
+
+Big_Data_Frame2 <- input_week02 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame2 <- Big_Data_Frame2 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame2 <- Big_Data_Frame2 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame2.1 <- rbind(WR_Data_Frame2, Defense_Data_Frame2) 
+
+Merged_Data_Frame2.2 <- Merged_Data_Frame2.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame2.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 2) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame2.4 <- Merged_Data_Frame2.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data02 <- full_join(Merged_Data_Frame2.4, Merged_Data_Frame2.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 3 Data Frames}
+
+Big_Data_Frame3 <- input_week03 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame3 <- Big_Data_Frame3 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame3 <- Big_Data_Frame3 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame3.1 <- rbind(WR_Data_Frame3, Defense_Data_Frame3) 
+
+Merged_Data_Frame3.2 <- Merged_Data_Frame3.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame3.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 3) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame3.4 <- Merged_Data_Frame3.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data03 <- full_join(Merged_Data_Frame3.4, Merged_Data_Frame3.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 4 Data Frames}
+
+Big_Data_Frame4 <- input_week04 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame4 <- Big_Data_Frame4 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame4 <- Big_Data_Frame4 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame4.1 <- rbind(WR_Data_Frame4, Defense_Data_Frame4) 
+
+Merged_Data_Frame4.2 <- Merged_Data_Frame4.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame4.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 4) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame4.4 <- Merged_Data_Frame4.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data04 <- full_join(Merged_Data_Frame4.4, Merged_Data_Frame4.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 5 Data Frames}
+
+Big_Data_Frame5 <- input_week05 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame5 <- Big_Data_Frame5 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame5 <- Big_Data_Frame5 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame5.1 <- rbind(WR_Data_Frame5, Defense_Data_Frame5) 
+
+Merged_Data_Frame5.2 <- Merged_Data_Frame5.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame5.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 5) |>
+ distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame5.4 <- Merged_Data_Frame5.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data05 <- full_join(Merged_Data_Frame5.4, Merged_Data_Frame5.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 6 Data Frames}
+
+Big_Data_Frame6 <- input_week06 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame6 <- Big_Data_Frame6 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame6 <- Big_Data_Frame6 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame6.1 <- rbind(WR_Data_Frame6, Defense_Data_Frame6) 
+
+Merged_Data_Frame6.2 <- Merged_Data_Frame6.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame6.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 6) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame6.4 <- Merged_Data_Frame6.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data06 <- full_join(Merged_Data_Frame6.4, Merged_Data_Frame6.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 7 Data Frames}
+
+Big_Data_Frame7 <- input_week07 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame7 <- Big_Data_Frame7 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame7 <- Big_Data_Frame7 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame7.1 <- rbind(WR_Data_Frame7, Defense_Data_Frame7) 
+
+Merged_Data_Frame7.2 <- Merged_Data_Frame7.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame7.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 7) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame7.4 <- Merged_Data_Frame7.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data07 <- full_join(Merged_Data_Frame7.4, Merged_Data_Frame7.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 8 Data Frames}
+
+Big_Data_Frame8 <- input_week08 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame8 <- Big_Data_Frame8 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame8 <- Big_Data_Frame8 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame8.1 <- rbind(WR_Data_Frame8, Defense_Data_Frame8) 
+
+Merged_Data_Frame8.2 <- Merged_Data_Frame8.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame8.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 8) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame8.4 <- Merged_Data_Frame8.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data08 <- full_join(Merged_Data_Frame8.4, Merged_Data_Frame8.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 9 Data Frames}
+
+Big_Data_Frame9 <- input_week09 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame9 <- Big_Data_Frame9 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame9 <- Big_Data_Frame9 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame9.1 <- rbind(WR_Data_Frame9, Defense_Data_Frame9) 
+
+Merged_Data_Frame9.2 <- Merged_Data_Frame9.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame9.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 9) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame9.4 <- Merged_Data_Frame9.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data09 <- full_join(Merged_Data_Frame9.4, Merged_Data_Frame9.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 10 Data Frames}
+
+Big_Data_Frame10 <- input_week10 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame10 <- Big_Data_Frame10 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame10 <- Big_Data_Frame10 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame10.1 <- rbind(WR_Data_Frame10, Defense_Data_Frame10) 
+
+Merged_Data_Frame10.2 <- Merged_Data_Frame10.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame10.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 10) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame10.4 <- Merged_Data_Frame10.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data10 <- full_join(Merged_Data_Frame10.4, Merged_Data_Frame10.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 11 Data Frames}
+
+Big_Data_Frame11 <- input_week11 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame11 <- Big_Data_Frame11 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame11 <- Big_Data_Frame11 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame11.1 <- rbind(WR_Data_Frame11, Defense_Data_Frame11) 
+
+Merged_Data_Frame11.2 <- Merged_Data_Frame11.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame11.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 11) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame11.4 <- Merged_Data_Frame11.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data11 <- full_join(Merged_Data_Frame11.4, Merged_Data_Frame11.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 12 Data Frames}
+
+Big_Data_Frame12 <- input_week12 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame12 <- Big_Data_Frame12 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame12 <- Big_Data_Frame12 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame12.1 <- rbind(WR_Data_Frame12, Defense_Data_Frame12) 
+
+Merged_Data_Frame12.2 <- Merged_Data_Frame12.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame12.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 12) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame12.4 <- Merged_Data_Frame12.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data12 <- full_join(Merged_Data_Frame12.4, Merged_Data_Frame12.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 13 Data Frames}
+
+Big_Data_Frame13 <- input_week13 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame13 <- Big_Data_Frame13 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame13 <- Big_Data_Frame13 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame13.1 <- rbind(WR_Data_Frame13, Defense_Data_Frame13) 
+
+Merged_Data_Frame13.2 <- Merged_Data_Frame13.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame13.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 13) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame13.4 <- Merged_Data_Frame13.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data13 <- full_join(Merged_Data_Frame13.4, Merged_Data_Frame13.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 14 Data Frames}
+
+Big_Data_Frame14 <- input_week14 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame14 <- Big_Data_Frame14 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame14 <- Big_Data_Frame14 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame14.1 <- rbind(WR_Data_Frame14, Defense_Data_Frame14) 
+
+Merged_Data_Frame14.2 <- Merged_Data_Frame14.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame14.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 14) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame14.4 <- Merged_Data_Frame14.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data14 <- full_join(Merged_Data_Frame14.4, Merged_Data_Frame14.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 15 Data Frames}
+
+Big_Data_Frame15 <- input_week15 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame15 <- Big_Data_Frame15 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame15 <- Big_Data_Frame15 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame15.1 <- rbind(WR_Data_Frame15, Defense_Data_Frame15) 
+
+Merged_Data_Frame15.2 <- Merged_Data_Frame15.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame15.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 15) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame15.4 <- Merged_Data_Frame15.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data15 <- full_join(Merged_Data_Frame15.4, Merged_Data_Frame15.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 16 Data Frames}
+
+Big_Data_Frame16 <- input_week16 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame16 <- Big_Data_Frame16 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame16 <- Big_Data_Frame16 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame16.1 <- rbind(WR_Data_Frame16, Defense_Data_Frame16) 
+
+Merged_Data_Frame16.2 <- Merged_Data_Frame16.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame16.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 16) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame16.4 <- Merged_Data_Frame16.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data16 <- full_join(Merged_Data_Frame16.4, Merged_Data_Frame16.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 17 Data Frames}
+
+Big_Data_Frame17 <- input_week17 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position,
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame17 <- Big_Data_Frame17 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame17 <- Big_Data_Frame17 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame17.1 <- rbind(WR_Data_Frame17, Defense_Data_Frame17) 
+
+Merged_Data_Frame17.2 <- Merged_Data_Frame17.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame17.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 17) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame17.4 <- Merged_Data_Frame17.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data17 <- full_join(Merged_Data_Frame17.4, Merged_Data_Frame17.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Creating Week 18 Data Frames}
+
+Big_Data_Frame18 <- input_week18 |> 
+  distinct(game_id, play_id, nfl_id, frame_id, player_name, player_role, player_position, 
+           s, new_x, new_y, new_ball_land_x, new_ball_land_y, num_frames_output) |>
+  group_by(game_id, play_id, nfl_id, player_name) |>
+  mutate(final_frame = length(frame_id)) |>
+  ungroup()
+
+WR_Data_Frame18 <- Big_Data_Frame18 |>
+  filter(player_role == "Targeted Receiver") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Defense_Data_Frame18 <- Big_Data_Frame18 |>
+  filter(player_role == "Defensive Coverage") |>
+  filter(frame_id == final_frame) |>
+  group_by(game_id, play_id, nfl_id) |>
+  mutate(distance_from_ball = sqrt((new_x - new_ball_land_x)^2 + (new_y - new_ball_land_y)^2),
+         time_to_ball = distance_from_ball / s) |>
+  ungroup()
+
+Merged_Data_Frame18.1 <- rbind(WR_Data_Frame18, Defense_Data_Frame18) 
+
+Merged_Data_Frame18.2 <- Merged_Data_Frame18.1 |>
+  group_by(game_id, play_id) |>
+  mutate(WR_time_to_ball = time_to_ball[1],
+         matchup_separation = time_to_ball - WR_time_to_ball,
+         coverage_defenders = sum(player_role == "Defensive Coverage"),
+         route_separation = min(matchup_separation[2:(coverage_defenders+1)])) |>
+  ungroup()
+
+Merged_Data_Frame18.3 <- context_info |> 
+  filter(season == 2023) |>
+  filter(week == 18) |>
+  distinct(game_id, play_id, possession_team, route_of_targeted_receiver, team_coverage_type,
+           pass_length, pass_result, pre_penalty_yards_gained, yards_gained)
+
+Merged_Data_Frame18.4 <- Merged_Data_Frame18.2 |>
+  filter(player_role == "Targeted Receiver")
+  
+All_Targeted_Receivers_Data18 <- full_join(Merged_Data_Frame18.4, Merged_Data_Frame18.3, 
+                                           join_by("game_id", "play_id"))
+
+```
+
+```{r Entire Season Data Frame}
+
+Entire_Season <- rbind(All_Targeted_Receivers_Data01, All_Targeted_Receivers_Data02,
+                       All_Targeted_Receivers_Data03, All_Targeted_Receivers_Data04,
+                       All_Targeted_Receivers_Data05, All_Targeted_Receivers_Data06,
+                       All_Targeted_Receivers_Data07, All_Targeted_Receivers_Data08,
+                       All_Targeted_Receivers_Data09, All_Targeted_Receivers_Data10,
+                       All_Targeted_Receivers_Data11, All_Targeted_Receivers_Data12,
+                       All_Targeted_Receivers_Data13, All_Targeted_Receivers_Data14,
+                       All_Targeted_Receivers_Data15, All_Targeted_Receivers_Data16,
+                       All_Targeted_Receivers_Data17, All_Targeted_Receivers_Data18)
+
+Outlier_Free_Entire_Season <- filter(Entire_Season, route_separation != -Inf)
+
+```
+
+## Interesting Analysis of Groups to Consider
+
+```{r Distributions}
+
+Route_Distribution <- table(Entire_Season$route_of_targeted_receiver)
+Coverage_Distribution <- table(Entire_Season$team_coverage_type)
+Position_Distribution <- table(Entire_Season$player_position)
+Player_Distribtuion <- table(Entire_Season$player_name)
+
+Route_Distribution
+Coverage_Distribution
+Position_Distribution
+Player_Distribtuion
+
+```
+
+```{r Entire Season by Route + Average ARS}
+
+Angle_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "ANGLE") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Corner_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "CORNER") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Cross_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "CROSS") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Flat_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "FLAT") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Go_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "GO") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Hitch_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "HITCH") |> 
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+In_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "IN") |> 
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Out_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "OUT") |> 
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Post_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "POST") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Screen_Routes <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "SCREEN") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Slant_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "SLANT") |> 
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Wheel_Routes <- Entire_Season |>
+  filter(route_of_targeted_receiver == "WHEEL") |> 
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+```
+
+```{r Entire Season by Coverage + Average ARS}
+
+COVER_0_MAN_Frame <- Entire_Season |>
+  filter(team_coverage_type == "COVER_0_MAN") |> 
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+COVER_1_MAN_Frame <- Entire_Season |>
+  filter(team_coverage_type == "COVER_1_MAN") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+COVER_2_MAN_Frame <- Entire_Season |>
+  filter(team_coverage_type == "COVER_2_MAN") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+COVER_2_ZONE_Frame <- Entire_Season |>
+  filter(team_coverage_type == "COVER_2_ZONE") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+COVER_3_ZONE_Frame <- Outlier_Free_Entire_Season |>
+  filter(team_coverage_type == "COVER_3_ZONE") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+COVER_4_ZONE_Frame <- Entire_Season |>
+  filter(team_coverage_type == "COVER_4_ZONE") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+COVER_6_ZONE_Frame <- Entire_Season |>
+  filter(team_coverage_type == "COVER_6_ZONE") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+PREVENT_Frame <- Entire_Season |>
+  filter(team_coverage_type == "PREVENT") |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+```
+
+## Other Pass Catcher Rankings
+
+```{r Entire Season Route Separation}
+
+All_Season <- Outlier_Free_Entire_Season |>
+  group_by(player_name) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Season_Rankings <- All_Season |>
+  distinct(player_name, player_position, possession_team, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+```
+
+```{r Entire Season DT Rankings}
+
+DT_Rankings <- Season_Rankings |>
+  filter(player_position == "DT")
+
+Outlier_Free_DT_Rankings <- DT_Rankings |>
+  filter(targets > 0)
+
+hist(DT_Rankings$average_route_separation)
+hist(Outlier_Free_DT_Rankings$average_route_separation)
+
+Top_10_DT_Targets <- Outlier_Free_DT_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Defensive Tackles",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 0 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_DT_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_DT_Targets
+
+```
+
+```{r Entire Season ILB Rankings}
+
+ILB_Rankings <- Season_Rankings |>
+  filter(player_position == "ILB")
+
+Outlier_Free_ILB_Rankings <- ILB_Rankings |>
+  filter(targets > 0)
+
+hist(ILB_Rankings$average_route_separation)
+hist(Outlier_Free_ILB_Rankings$average_route_separation)
+
+Top_10_ILB_Targets <- Outlier_Free_ILB_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Inside Linebackers",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 0 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_ILB_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_ILB_Targets
+
+```
+
+```{r Entire Season T Rankings}
+
+T_Rankings <- Season_Rankings |>
+  filter(player_position == "T")
+
+Outlier_Free_T_Rankings <- T_Rankings |>
+  filter(targets > 0)
+
+hist(T_Rankings$average_route_separation)
+hist(Outlier_Free_T_Rankings$average_route_separation)
+
+Top_10_T_Targets <- Outlier_Free_T_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Tackles",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 0 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_T_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_T_Targets
+
+```
+
+```{r Entire Season CB Rankings}
+
+CB_Rankings <- Season_Rankings |>
+  filter(player_position == "CB")
+
+Outlier_Free_CB_Rankings <- CB_Rankings |>
+  filter(targets > 0)
+
+hist(CB_Rankings$average_route_separation)
+hist(Outlier_Free_CB_Rankings$average_route_separation)
+
+Top_10_CB_Targets <- Outlier_Free_CB_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Cornerbacks",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 0 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_CB_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_CB_Targets
+
+```
+
+```{r Entire Season QB Rankings}
+
+QB_Rankings <- Season_Rankings |>
+  filter(player_position == "QB")
+
+Outlier_Free_QB_Rankings <- QB_Rankings |>
+  filter(targets > 0)
+
+hist(QB_Rankings$average_route_separation)
+hist(Outlier_Free_QB_Rankings$average_route_separation)
+
+Top_10_QB_Targets <- Outlier_Free_QB_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Quarterbacks",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 0 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_QB_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_QB_Targets
+
+```
+
+```{r Entire Season FB Rankings}
+
+FB_Rankings <- Season_Rankings |>
+  filter(player_position == "FB")
+
+Outlier_Free_FB_Rankings <- FB_Rankings |>
+  filter(targets > 2)
+
+hist(FB_Rankings$average_route_separation)
+hist(Outlier_Free_FB_Rankings$average_route_separation)
+
+Top_10_FB_Targets <- Outlier_Free_FB_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Full Backs",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 3 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_FB_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_FB_Targets
+
+```
+
+## Primary Pass Catcher Rankings
+
+```{r Entire Season RB Rankings}
+
+RB_Rankings <- Season_Rankings |>
+  filter(player_position == "RB")
+
+Outlier_Free_RB_Rankings <- RB_Rankings |>
+  filter(targets >= 30)
+
+hist(RB_Rankings$average_route_separation)
+hist(Outlier_Free_RB_Rankings$average_route_separation)
+
+Top_10_RB_Targets <- Outlier_Free_RB_Rankings |>
+  distinct(player_name, possession_team, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  mutate(Rank = row_number()) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Running Backs",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 30 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_RB_Rankings$average_route_separation) |>
+  cols_move_to_start(c(Rank)) |>
+  cols_label(Rank = "Rank", player_name = "Player", possession_team = "Team", 
+             average_route_separation = "Average Route Separation")
+
+Top_10_RB_Targets
+
+```
+
+```{r Entire Season TE Rankings}
+
+TE_Rankings <- Season_Rankings |>
+  filter(player_position == "TE")
+
+Outlier_Free_TE_Rankings <- TE_Rankings |>
+  filter(targets >= 30)
+
+hist(TE_Rankings$average_route_separation)
+hist(Outlier_Free_TE_Rankings$average_route_separation)
+
+Top_10_TE_Targets <- Outlier_Free_TE_Rankings |>
+  distinct(player_name, possession_team, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  mutate(Rank = row_number()) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Tight Ends",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 30 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_TE_Rankings$average_route_separation) |>
+  cols_move_to_start(c(Rank)) |>
+  cols_label(Rank = "Rank", player_name = "Player", possession_team = "Team", 
+             average_route_separation = "Average Route Separation")
+
+Top_10_TE_Targets
+
+```
+
+```{r Entire Season WR Rankings}
+
+WR_Rankings <- Season_Rankings |>
+  filter(player_position == "WR")
+
+Outlier_Free_WR_Rankings <- WR_Rankings |>
+  filter(targets >= 50)
+
+hist(WR_Rankings$average_route_separation)
+hist(Outlier_Free_WR_Rankings$average_route_separation)
+
+Top_20_WR_Targets <- Outlier_Free_WR_Rankings |>
+  distinct(player_name, possession_team, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  mutate(Rank = row_number()) |>
+  slice(1:20) |>
+  gt() |>
+  tab_header(title = "Top 20 Wide Receivers",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 50 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_WR_Rankings$average_route_separation) |>
+  cols_move_to_start(c(Rank)) |>
+  cols_label(Rank = "Rank", player_name = "Player", possession_team = "Team", 
+             average_route_separation = "Average Route Separation")
+
+Top_20_WR_Targets
+
+```
+
+## Team Rankings 
+
+```{r All NFL Teams ARS}
+
+Teams_Targets <- Outlier_Free_Entire_Season |>
+  group_by(possession_team) |>
+  mutate(targets = length(route_separation), 
+         average_route_separation = mean(route_separation)) |>
+  ungroup()
+
+Team_Rankings <- Teams_Targets |>
+  distinct(possession_team, targets, average_route_separation) |>
+  group_by(possession_team) |>
+  slice(1) |>
+  ungroup()
+  
+hist(Team_Rankings$average_route_separation)
+
+All_Teams_AVG_ARS <- Team_Rankings |>
+  distinct(possession_team, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  mutate(Rank = row_number()) |>
+  gt() |>
+  tab_header(title = "Team Rankings by Average ARS",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Team_Rankings$average_route_separation) |>
+  cols_move_to_start(c(Rank)) |>
+  cols_label(Rank = "Rank", possession_team = "Team", 
+             average_route_separation = "Average Route Separation")
+
+All_Teams_AVG_ARS 
+
+```
+
+## Team Rankings by Route Distribution 
+
+```{r NFL Team Route Distribution Data Frame}
+
+Pittsburgh_Routes <- Teams_Targets |>
+  filter(possession_team == "PIT")
+PIT_Distribution <- table(Pittsburgh_Routes$route_of_targeted_receiver)
+
+Steelers_Routes <- Pittsburgh_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = PIT_Distribution[1] / targets * 100,
+         Corner_Percentage = PIT_Distribution[2] / targets * 100,
+         Cross_Percentage = PIT_Distribution[3] / targets * 100,
+         Flat_Percentage = PIT_Distribution[4] / targets * 100,
+         Go_Percentage = PIT_Distribution[5] / targets * 100,
+         Hitch_Percentage = PIT_Distribution[6] / targets * 100,
+         In_Percentage = PIT_Distribution[7] / targets * 100,
+         Out_Percentage = PIT_Distribution[8] / targets * 100,
+         Post_Percentage = PIT_Distribution[9] / targets * 100,
+         Screen_Percentage = PIT_Distribution[10] / targets * 100,
+         Slant_Percentage = PIT_Distribution[11] / targets * 100,
+         Wheel_Percentage = PIT_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Cincinnati_Routes <- Teams_Targets |>
+  filter(possession_team == "CIN")
+CIN_Distribution <- table(Cincinnati_Routes$route_of_targeted_receiver)
+
+Bengals_Routes <- Cincinnati_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = CIN_Distribution[1] / targets * 100,
+         Corner_Percentage = CIN_Distribution[2] / targets * 100,
+         Cross_Percentage = CIN_Distribution[3] / targets * 100,
+         Flat_Percentage = CIN_Distribution[4] / targets * 100,
+         Go_Percentage = CIN_Distribution[5] / targets * 100,
+         Hitch_Percentage = CIN_Distribution[6] / targets * 100,
+         In_Percentage = CIN_Distribution[7] / targets * 100,
+         Out_Percentage = CIN_Distribution[8] / targets * 100,
+         Post_Percentage = CIN_Distribution[9] / targets * 100,
+         Screen_Percentage = CIN_Distribution[10] / targets * 100,
+         Slant_Percentage = CIN_Distribution[11] / targets * 100,
+         Wheel_Percentage = CIN_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Cleveland_Routes <- Teams_Targets |>
+  filter(possession_team == "CLE")
+CLE_Distribution <- table(Cleveland_Routes$route_of_targeted_receiver)
+
+Browns_Routes <- Cleveland_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = CLE_Distribution[1] / targets * 100,
+         Corner_Percentage = CLE_Distribution[2] / targets * 100,
+         Cross_Percentage = CLE_Distribution[3] / targets * 100,
+         Flat_Percentage = CLE_Distribution[4] / targets * 100,
+         Go_Percentage = CLE_Distribution[5] / targets * 100,
+         Hitch_Percentage = CLE_Distribution[6] / targets * 100,
+         In_Percentage = CLE_Distribution[7] / targets * 100,
+         Out_Percentage = CLE_Distribution[8] / targets * 100,
+         Post_Percentage = CLE_Distribution[9] / targets * 100,
+         Screen_Percentage = CLE_Distribution[10] / targets * 100,
+         Slant_Percentage = CLE_Distribution[11] / targets * 100,
+         Wheel_Percentage = CLE_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Baltimore_Routes <- Teams_Targets |>
+  filter(possession_team == "BAL")
+BAL_Distribution <- table(Baltimore_Routes$route_of_targeted_receiver)
+
+Ravens_Routes <- Baltimore_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = BAL_Distribution[1] / targets * 100,
+         Corner_Percentage = BAL_Distribution[2] / targets * 100,
+         Cross_Percentage = BAL_Distribution[3] / targets * 100,
+         Flat_Percentage = BAL_Distribution[4] / targets * 100,
+         Go_Percentage = BAL_Distribution[5] / targets * 100,
+         Hitch_Percentage = BAL_Distribution[6] / targets * 100,
+         In_Percentage = BAL_Distribution[7] / targets * 100,
+         Out_Percentage = BAL_Distribution[8] / targets * 100,
+         Post_Percentage = BAL_Distribution[9] / targets * 100,
+         Screen_Percentage = BAL_Distribution[10] / targets * 100,
+         Slant_Percentage = BAL_Distribution[11] / targets * 100,
+         Wheel_Percentage = BAL_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Buffalo_Routes <- Teams_Targets |>
+  filter(possession_team == "BUF")
+BUF_Distribution <- table(Buffalo_Routes$route_of_targeted_receiver)
+
+Bills_Routes <- Buffalo_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = BUF_Distribution[1] / targets * 100,
+         Corner_Percentage = BUF_Distribution[2] / targets * 100,
+         Cross_Percentage = BUF_Distribution[3] / targets * 100,
+         Flat_Percentage = BUF_Distribution[4] / targets * 100,
+         Go_Percentage = BUF_Distribution[5] / targets * 100,
+         Hitch_Percentage = BUF_Distribution[6] / targets * 100,
+         In_Percentage = BUF_Distribution[7] / targets * 100,
+         Out_Percentage = BUF_Distribution[8] / targets * 100,
+         Post_Percentage = BUF_Distribution[9] / targets * 100,
+         Screen_Percentage = BUF_Distribution[10] / targets * 100,
+         Slant_Percentage = BUF_Distribution[11] / targets * 100,
+         Wheel_Percentage = BUF_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Miami_Routes <- Teams_Targets |>
+  filter(possession_team == "MIA")
+MIA_Distribution <- table(Miami_Routes$route_of_targeted_receiver)
+
+Dolphins_Routes <- Miami_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = MIA_Distribution[1] / targets * 100,
+         Corner_Percentage = MIA_Distribution[2] / targets * 100,
+         Cross_Percentage = MIA_Distribution[3] / targets * 100,
+         Flat_Percentage = MIA_Distribution[4] / targets * 100,
+         Go_Percentage = MIA_Distribution[5] / targets * 100,
+         Hitch_Percentage = MIA_Distribution[6] / targets * 100,
+         In_Percentage = MIA_Distribution[7] / targets * 100,
+         Out_Percentage = MIA_Distribution[8] / targets * 100,
+         Post_Percentage = MIA_Distribution[9] / targets * 100,
+         Screen_Percentage = MIA_Distribution[10] / targets * 100,
+         Slant_Percentage = MIA_Distribution[11] / targets * 100,
+         Wheel_Percentage = MIA_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+NewEngland_Routes <- Teams_Targets |>
+  filter(possession_team == "NE")
+NE_Distribution <- table(NewEngland_Routes$route_of_targeted_receiver)
+
+Patriots_Routes <- NewEngland_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = NE_Distribution[1] / targets * 100,
+         Corner_Percentage = NE_Distribution[2] / targets * 100,
+         Cross_Percentage = NE_Distribution[3] / targets * 100,
+         Flat_Percentage = NE_Distribution[4] / targets * 100,
+         Go_Percentage = NE_Distribution[5] / targets * 100,
+         Hitch_Percentage = NE_Distribution[6] / targets * 100,
+         In_Percentage = NE_Distribution[7] / targets * 100,
+         Out_Percentage = NE_Distribution[8] / targets * 100,
+         Post_Percentage = NE_Distribution[9] / targets * 100,
+         Screen_Percentage = NE_Distribution[10] / targets * 100,
+         Slant_Percentage = NE_Distribution[11] / targets * 100,
+         Wheel_Percentage = NE_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+NewYorkJet_Routes <- Teams_Targets |>
+  filter(possession_team == "NYJ")
+NYJ_Distribution <- table(NewYorkJet_Routes$route_of_targeted_receiver)
+
+Jets_Routes <- NewYorkJet_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = NYJ_Distribution[1] / targets * 100,
+         Corner_Percentage = NYJ_Distribution[2] / targets * 100,
+         Cross_Percentage = NYJ_Distribution[3] / targets * 100,
+         Flat_Percentage = NYJ_Distribution[4] / targets * 100,
+         Go_Percentage = NYJ_Distribution[5] / targets * 100,
+         Hitch_Percentage = NYJ_Distribution[6] / targets * 100,
+         In_Percentage = NYJ_Distribution[7] / targets * 100,
+         Out_Percentage = NYJ_Distribution[8] / targets * 100,
+         Post_Percentage = NYJ_Distribution[9] / targets * 100,
+         Screen_Percentage = NYJ_Distribution[10] / targets * 100,
+         Slant_Percentage = NYJ_Distribution[11] / targets * 100,
+         Wheel_Percentage = NYJ_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Houston_Routes <- Teams_Targets |>
+  filter(possession_team == "HOU")
+HOU_Distribution <- table(Houston_Routes$route_of_targeted_receiver)
+
+Texans_Routes <- Houston_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = HOU_Distribution[1] / targets * 100,
+         Corner_Percentage = HOU_Distribution[2] / targets * 100,
+         Cross_Percentage = HOU_Distribution[3] / targets * 100,
+         Flat_Percentage = HOU_Distribution[4] / targets * 100,
+         Go_Percentage = HOU_Distribution[5] / targets * 100,
+         Hitch_Percentage = HOU_Distribution[6] / targets * 100,
+         In_Percentage = HOU_Distribution[7] / targets * 100,
+         Out_Percentage = HOU_Distribution[8] / targets * 100,
+         Post_Percentage = HOU_Distribution[9] / targets * 100,
+         Screen_Percentage = HOU_Distribution[10] / targets * 100,
+         Slant_Percentage = HOU_Distribution[11] / targets * 100,
+         Wheel_Percentage = HOU_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Indianapolis_Routes <- Teams_Targets |>
+  filter(possession_team == "IND")
+IND_Distribution <- table(Indianapolis_Routes$route_of_targeted_receiver)
+
+Colts_Routes <- Indianapolis_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = IND_Distribution[1] / targets * 100,
+         Corner_Percentage = IND_Distribution[2] / targets * 100,
+         Cross_Percentage = IND_Distribution[3] / targets * 100,
+         Flat_Percentage = IND_Distribution[4] / targets * 100,
+         Go_Percentage = IND_Distribution[5] / targets * 100,
+         Hitch_Percentage = IND_Distribution[6] / targets * 100,
+         In_Percentage = IND_Distribution[7] / targets * 100,
+         Out_Percentage = IND_Distribution[8] / targets * 100,
+         Post_Percentage = IND_Distribution[9] / targets * 100,
+         Screen_Percentage = IND_Distribution[10] / targets * 100,
+         Slant_Percentage = IND_Distribution[11] / targets * 100,
+         Wheel_Percentage = IND_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Jacksonville_Routes <- Teams_Targets |>
+  filter(possession_team == "JAX")
+JAX_Distribution <- table(Jacksonville_Routes$route_of_targeted_receiver)
+
+Jaguars_Routes <- Jacksonville_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = JAX_Distribution[1] / targets * 100,
+         Corner_Percentage = JAX_Distribution[2] / targets * 100,
+         Cross_Percentage = JAX_Distribution[3] / targets * 100,
+         Flat_Percentage = JAX_Distribution[4] / targets * 100,
+         Go_Percentage = JAX_Distribution[5] / targets * 100,
+         Hitch_Percentage = JAX_Distribution[6] / targets * 100,
+         In_Percentage = JAX_Distribution[7] / targets * 100,
+         Out_Percentage = JAX_Distribution[8] / targets * 100,
+         Post_Percentage = JAX_Distribution[9] / targets * 100,
+         Screen_Percentage = JAX_Distribution[10] / targets * 100,
+         Slant_Percentage = JAX_Distribution[11] / targets * 100,
+         Wheel_Percentage = JAX_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Tennessee_Routes <- Teams_Targets |>
+  filter(possession_team == "TEN")
+TEN_Distribution <- table(Tennessee_Routes$route_of_targeted_receiver)
+
+Titans_Routes <- Tennessee_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = TEN_Distribution[1] / targets * 100,
+         Corner_Percentage = TEN_Distribution[2] / targets * 100,
+         Cross_Percentage = TEN_Distribution[3] / targets * 100,
+         Flat_Percentage = TEN_Distribution[4] / targets * 100,
+         Go_Percentage = TEN_Distribution[5] / targets * 100,
+         Hitch_Percentage = TEN_Distribution[6] / targets * 100,
+         In_Percentage = TEN_Distribution[7] / targets * 100,
+         Out_Percentage = TEN_Distribution[8] / targets * 100,
+         Post_Percentage = TEN_Distribution[9] / targets * 100,
+         Screen_Percentage = TEN_Distribution[10] / targets * 100,
+         Slant_Percentage = TEN_Distribution[11] / targets * 100,
+         Wheel_Percentage = TEN_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Denver_Routes <- Teams_Targets |>
+  filter(possession_team == "DEN")
+DEN_Distribution <- table(Denver_Routes$route_of_targeted_receiver)
+
+Broncos_Routes <- Denver_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = DEN_Distribution[1] / targets * 100,
+         Corner_Percentage = DEN_Distribution[2] / targets * 100,
+         Cross_Percentage = DEN_Distribution[3] / targets * 100,
+         Flat_Percentage = DEN_Distribution[4] / targets * 100,
+         Go_Percentage = DEN_Distribution[5] / targets * 100,
+         Hitch_Percentage = DEN_Distribution[6] / targets * 100,
+         In_Percentage = DEN_Distribution[7] / targets * 100,
+         Out_Percentage = DEN_Distribution[8] / targets * 100,
+         Post_Percentage = DEN_Distribution[9] / targets * 100,
+         Screen_Percentage = DEN_Distribution[10] / targets * 100,
+         Slant_Percentage = DEN_Distribution[11] / targets * 100,
+         Wheel_Percentage = DEN_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+KansasCity_Routes <- Teams_Targets |>
+  filter(possession_team == "KC")
+KC_Distribution <- table(KansasCity_Routes$route_of_targeted_receiver)
+
+Chiefs_Routes <- KansasCity_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = KC_Distribution[1] / targets * 100,
+         Corner_Percentage = KC_Distribution[2] / targets * 100,
+         Cross_Percentage = KC_Distribution[3] / targets * 100,
+         Flat_Percentage = KC_Distribution[4] / targets * 100,
+         Go_Percentage = KC_Distribution[5] / targets * 100,
+         Hitch_Percentage = KC_Distribution[6] / targets * 100,
+         In_Percentage = KC_Distribution[7] / targets * 100,
+         Out_Percentage = KC_Distribution[8] / targets * 100,
+         Post_Percentage = KC_Distribution[9] / targets * 100,
+         Screen_Percentage = KC_Distribution[10] / targets * 100,
+         Slant_Percentage = KC_Distribution[11] / targets * 100,
+         Wheel_Percentage = KC_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+LACharger_Routes <- Teams_Targets |>
+  filter(possession_team == "LAC")
+LAC_Distribution <- table(LACharger_Routes$route_of_targeted_receiver)
+
+Chargers_Routes <- LACharger_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = LAC_Distribution[1] / targets * 100,
+         Corner_Percentage = LAC_Distribution[2] / targets * 100,
+         Cross_Percentage = LAC_Distribution[3] / targets * 100,
+         Flat_Percentage = LAC_Distribution[4] / targets * 100,
+         Go_Percentage = LAC_Distribution[5] / targets * 100,
+         Hitch_Percentage = LAC_Distribution[6] / targets * 100,
+         In_Percentage = LAC_Distribution[7] / targets * 100,
+         Out_Percentage = LAC_Distribution[8] / targets * 100,
+         Post_Percentage = LAC_Distribution[9] / targets * 100,
+         Screen_Percentage = LAC_Distribution[10] / targets * 100,
+         Slant_Percentage = LAC_Distribution[11] / targets * 100,
+         Wheel_Percentage = LAC_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+LasVegas_Routes <- Teams_Targets |>
+  filter(possession_team == "LV")
+LV_Distribution <- table(LasVegas_Routes$route_of_targeted_receiver)
+
+Raiders_Routes <- LasVegas_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = LV_Distribution[1] / targets * 100,
+         Corner_Percentage = LV_Distribution[2] / targets * 100,
+         Cross_Percentage = LV_Distribution[3] / targets * 100,
+         Flat_Percentage = LV_Distribution[4] / targets * 100,
+         Go_Percentage = LV_Distribution[5] / targets * 100,
+         Hitch_Percentage = LV_Distribution[6] / targets * 100,
+         In_Percentage = LV_Distribution[7] / targets * 100,
+         Out_Percentage = LV_Distribution[8] / targets * 100,
+         Post_Percentage = LV_Distribution[9] / targets * 100,
+         Screen_Percentage = LV_Distribution[10] / targets * 100,
+         Slant_Percentage = LV_Distribution[11] / targets * 100,
+         Wheel_Percentage = LV_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Chicago_Routes <- Teams_Targets |>
+  filter(possession_team == "CHI")
+CHI_Distribution <- table(Chicago_Routes$route_of_targeted_receiver)
+
+Bears_Routes <- Chicago_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = CHI_Distribution[1] / targets * 100,
+         Corner_Percentage = CHI_Distribution[2] / targets * 100,
+         Cross_Percentage = CHI_Distribution[3] / targets * 100,
+         Flat_Percentage = CHI_Distribution[4] / targets * 100,
+         Go_Percentage = CHI_Distribution[5] / targets * 100,
+         Hitch_Percentage = CHI_Distribution[6] / targets * 100,
+         In_Percentage = CHI_Distribution[7] / targets * 100,
+         Out_Percentage = CHI_Distribution[8] / targets * 100,
+         Post_Percentage = CHI_Distribution[9] / targets * 100,
+         Screen_Percentage = CHI_Distribution[10] / targets * 100,
+         Slant_Percentage = CHI_Distribution[11] / targets * 100,
+         Wheel_Percentage = CHI_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Detroit_Routes <- Teams_Targets |>
+  filter(possession_team == "DET")
+DET_Distribution <- table(Detroit_Routes$route_of_targeted_receiver)
+
+Lions_Routes <- Detroit_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = DET_Distribution[1] / targets * 100,
+         Corner_Percentage = DET_Distribution[2] / targets * 100,
+         Cross_Percentage = DET_Distribution[3] / targets * 100,
+         Flat_Percentage = DET_Distribution[4] / targets * 100,
+         Go_Percentage = DET_Distribution[5] / targets * 100,
+         Hitch_Percentage = DET_Distribution[6] / targets * 100,
+         In_Percentage = DET_Distribution[7] / targets * 100,
+         Out_Percentage = DET_Distribution[8] / targets * 100,
+         Post_Percentage = DET_Distribution[9] / targets * 100,
+         Screen_Percentage = DET_Distribution[10] / targets * 100,
+         Slant_Percentage = DET_Distribution[11] / targets * 100,
+         Wheel_Percentage = DET_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+GreenBay_Routes <- Teams_Targets |>
+  filter(possession_team == "GB")
+GB_Distribution <- table(GreenBay_Routes$route_of_targeted_receiver)
+
+Packers_Routes <- GreenBay_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = GB_Distribution[1] / targets * 100,
+         Corner_Percentage = GB_Distribution[2] / targets * 100,
+         Cross_Percentage = GB_Distribution[3] / targets * 100,
+         Flat_Percentage = GB_Distribution[4] / targets * 100,
+         Go_Percentage = GB_Distribution[5] / targets * 100,
+         Hitch_Percentage = GB_Distribution[6] / targets * 100,
+         In_Percentage = GB_Distribution[7] / targets * 100,
+         Out_Percentage = GB_Distribution[8] / targets * 100,
+         Post_Percentage = GB_Distribution[9] / targets * 100,
+         Screen_Percentage = GB_Distribution[10] / targets * 100,
+         Slant_Percentage = GB_Distribution[11] / targets * 100,
+         Wheel_Percentage = GB_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Minnesota_Routes <- Teams_Targets |>
+  filter(possession_team == "MIN")
+MIN_Distribution <- table(Minnesota_Routes$route_of_targeted_receiver)
+
+Vikings_Routes <- Minnesota_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = MIN_Distribution[1] / targets * 100,
+         Corner_Percentage = MIN_Distribution[2] / targets * 100,
+         Cross_Percentage = MIN_Distribution[3] / targets * 100,
+         Flat_Percentage = MIN_Distribution[4] / targets * 100,
+         Go_Percentage = MIN_Distribution[5] / targets * 100,
+         Hitch_Percentage = MIN_Distribution[6] / targets * 100,
+         In_Percentage = MIN_Distribution[7] / targets * 100,
+         Out_Percentage = MIN_Distribution[8] / targets * 100,
+         Post_Percentage = MIN_Distribution[9] / targets * 100,
+         Screen_Percentage = MIN_Distribution[10] / targets * 100,
+         Slant_Percentage = MIN_Distribution[11] / targets * 100,
+         Wheel_Percentage = MIN_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Dallas_Routes <- Teams_Targets |>
+  filter(possession_team == "DAL")
+DAL_Distribution <- table(Dallas_Routes$route_of_targeted_receiver)
+
+Cowboys_Routes <- Dallas_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = DAL_Distribution[1] / targets * 100,
+         Corner_Percentage = DAL_Distribution[2] / targets * 100,
+         Cross_Percentage = DAL_Distribution[3] / targets * 100,
+         Flat_Percentage = DAL_Distribution[4] / targets * 100,
+         Go_Percentage = DAL_Distribution[5] / targets * 100,
+         Hitch_Percentage = DAL_Distribution[6] / targets * 100,
+         In_Percentage = DAL_Distribution[7] / targets * 100,
+         Out_Percentage = DAL_Distribution[8] / targets * 100,
+         Post_Percentage = DAL_Distribution[9] / targets * 100,
+         Screen_Percentage = DAL_Distribution[10] / targets * 100,
+         Slant_Percentage = DAL_Distribution[11] / targets * 100,
+         Wheel_Percentage = DAL_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+NewYorkGiant_Routes <- Teams_Targets |>
+  filter(possession_team == "NYG")
+NYG_Distribution <- table(NewYorkGiant_Routes$route_of_targeted_receiver)
+
+Giants_Routes <- NewYorkGiant_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = NYG_Distribution[1] / targets * 100,
+         Corner_Percentage = NYG_Distribution[2] / targets * 100,
+         Cross_Percentage = NYG_Distribution[3] / targets * 100,
+         Flat_Percentage = NYG_Distribution[4] / targets * 100,
+         Go_Percentage = NYG_Distribution[5] / targets * 100,
+         Hitch_Percentage = NYG_Distribution[6] / targets * 100,
+         In_Percentage = NYG_Distribution[7] / targets * 100,
+         Out_Percentage = NYG_Distribution[8] / targets * 100,
+         Post_Percentage = NYG_Distribution[9] / targets * 100,
+         Screen_Percentage = NYG_Distribution[10] / targets * 100,
+         Slant_Percentage = NYG_Distribution[11] / targets * 100,
+         Wheel_Percentage = NYG_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Philadelphia_Routes <- Teams_Targets |>
+  filter(possession_team == "PHI")
+PHI_Distribution <- table(Philadelphia_Routes$route_of_targeted_receiver)
+
+Eagles_Routes <- Philadelphia_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = PHI_Distribution[1] / targets * 100,
+         Corner_Percentage = PHI_Distribution[2] / targets * 100,
+         Cross_Percentage = PHI_Distribution[3] / targets * 100,
+         Flat_Percentage = PHI_Distribution[4] / targets * 100,
+         Go_Percentage = PHI_Distribution[5] / targets * 100,
+         Hitch_Percentage = PHI_Distribution[6] / targets * 100,
+         In_Percentage = PHI_Distribution[7] / targets * 100,
+         Out_Percentage = PHI_Distribution[8] / targets * 100,
+         Post_Percentage = PHI_Distribution[9] / targets * 100,
+         Screen_Percentage = PHI_Distribution[10] / targets * 100,
+         Slant_Percentage = PHI_Distribution[11] / targets * 100,
+         Wheel_Percentage = PHI_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Washington_Routes <- Teams_Targets |>
+  filter(possession_team == "WAS")
+WAS_Distribution <- table(Washington_Routes$route_of_targeted_receiver)
+
+Commanders_Routes <- Washington_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = WAS_Distribution[1] / targets * 100,
+         Corner_Percentage = WAS_Distribution[2] / targets * 100,
+         Cross_Percentage = WAS_Distribution[3] / targets * 100,
+         Flat_Percentage = WAS_Distribution[4] / targets * 100,
+         Go_Percentage = WAS_Distribution[5] / targets * 100,
+         Hitch_Percentage = WAS_Distribution[6] / targets * 100,
+         In_Percentage = WAS_Distribution[7] / targets * 100,
+         Out_Percentage = WAS_Distribution[8] / targets * 100,
+         Post_Percentage = WAS_Distribution[9] / targets * 100,
+         Screen_Percentage = WAS_Distribution[10] / targets * 100,
+         Slant_Percentage = WAS_Distribution[11] / targets * 100,
+         Wheel_Percentage = WAS_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Atlanta_Routes <- Teams_Targets |>
+  filter(possession_team == "ATL")
+ATL_Distribution <- table(Atlanta_Routes$route_of_targeted_receiver)
+
+Falcons_Routes <- Atlanta_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = ATL_Distribution[1] / targets * 100,
+         Corner_Percentage = ATL_Distribution[2] / targets * 100,
+         Cross_Percentage = ATL_Distribution[3] / targets * 100,
+         Flat_Percentage = ATL_Distribution[4] / targets * 100,
+         Go_Percentage = ATL_Distribution[5] / targets * 100,
+         Hitch_Percentage = ATL_Distribution[6] / targets * 100,
+         In_Percentage = ATL_Distribution[7] / targets * 100,
+         Out_Percentage = ATL_Distribution[8] / targets * 100,
+         Post_Percentage = ATL_Distribution[9] / targets * 100,
+         Screen_Percentage = ATL_Distribution[10] / targets * 100,
+         Slant_Percentage = ATL_Distribution[11] / targets * 100,
+         Wheel_Percentage = ATL_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Carolina_Routes <- Teams_Targets |>
+  filter(possession_team == "CAR")
+CAR_Distribution <- table(Carolina_Routes$route_of_targeted_receiver)
+
+Panthers_Routes <- Carolina_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = CAR_Distribution[1] / targets * 100,
+         Corner_Percentage = CAR_Distribution[2] / targets * 100,
+         Cross_Percentage = CAR_Distribution[3] / targets * 100,
+         Flat_Percentage = CAR_Distribution[4] / targets * 100,
+         Go_Percentage = CAR_Distribution[5] / targets * 100,
+         Hitch_Percentage = CAR_Distribution[6] / targets * 100,
+         In_Percentage = CAR_Distribution[7] / targets * 100,
+         Out_Percentage = CAR_Distribution[8] / targets * 100,
+         Post_Percentage = CAR_Distribution[9] / targets * 100,
+         Screen_Percentage = CAR_Distribution[10] / targets * 100,
+         Slant_Percentage = CAR_Distribution[11] / targets * 100,
+         Wheel_Percentage = CAR_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+NewOrleans_Routes <- Teams_Targets |>
+  filter(possession_team == "NO")
+NO_Distribution <- table(NewOrleans_Routes$route_of_targeted_receiver)
+
+Saints_Routes <- NewOrleans_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = NO_Distribution[1] / targets * 100,
+         Corner_Percentage = NO_Distribution[2] / targets * 100,
+         Cross_Percentage = NO_Distribution[3] / targets * 100,
+         Flat_Percentage = NO_Distribution[4] / targets * 100,
+         Go_Percentage = NO_Distribution[5] / targets * 100,
+         Hitch_Percentage = NO_Distribution[6] / targets * 100,
+         In_Percentage = NO_Distribution[7] / targets * 100,
+         Out_Percentage = NO_Distribution[8] / targets * 100,
+         Post_Percentage = NO_Distribution[9] / targets * 100,
+         Screen_Percentage = NO_Distribution[10] / targets * 100,
+         Slant_Percentage = NO_Distribution[11] / targets * 100,
+         Wheel_Percentage = NO_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+TampaBay_Routes <- Teams_Targets |>
+  filter(possession_team == "TB")
+TB_Distribution <- table(TampaBay_Routes$route_of_targeted_receiver)
+
+Buccaneers_Routes <- TampaBay_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = TB_Distribution[1] / targets * 100,
+         Corner_Percentage = TB_Distribution[2] / targets * 100,
+         Cross_Percentage = TB_Distribution[3] / targets * 100,
+         Flat_Percentage = TB_Distribution[4] / targets * 100,
+         Go_Percentage = TB_Distribution[5] / targets * 100,
+         Hitch_Percentage = TB_Distribution[6] / targets * 100,
+         In_Percentage = TB_Distribution[7] / targets * 100,
+         Out_Percentage = TB_Distribution[8] / targets * 100,
+         Post_Percentage = TB_Distribution[9] / targets * 100,
+         Screen_Percentage = TB_Distribution[10] / targets * 100,
+         Slant_Percentage = TB_Distribution[11] / targets * 100,
+         Wheel_Percentage = TB_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Arizona_Routes <- Teams_Targets |>
+  filter(possession_team == "ARI")
+ARI_Distribution <- table(Arizona_Routes$route_of_targeted_receiver)
+
+Cardinals_Routes <- Arizona_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = ARI_Distribution[1] / targets * 100,
+         Corner_Percentage = ARI_Distribution[2] / targets * 100,
+         Cross_Percentage = ARI_Distribution[3] / targets * 100,
+         Flat_Percentage = ARI_Distribution[4] / targets * 100,
+         Go_Percentage = ARI_Distribution[5] / targets * 100,
+         Hitch_Percentage = ARI_Distribution[6] / targets * 100,
+         In_Percentage = ARI_Distribution[7] / targets * 100,
+         Out_Percentage = ARI_Distribution[8] / targets * 100,
+         Post_Percentage = ARI_Distribution[9] / targets * 100,
+         Screen_Percentage = ARI_Distribution[10] / targets * 100,
+         Slant_Percentage = ARI_Distribution[11] / targets * 100,
+         Wheel_Percentage = ARI_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+LosAnglesRam_Routes <- Teams_Targets |>
+  filter(possession_team == "LA")
+LA_Distribution <- table(LosAnglesRam_Routes$route_of_targeted_receiver)
+
+Rams_Routes <- LosAnglesRam_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = LA_Distribution[1] / targets * 100,
+         Corner_Percentage = LA_Distribution[2] / targets * 100,
+         Cross_Percentage = LA_Distribution[3] / targets * 100,
+         Flat_Percentage = LA_Distribution[4] / targets * 100,
+         Go_Percentage = LA_Distribution[5] / targets * 100,
+         Hitch_Percentage = LA_Distribution[6] / targets * 100,
+         In_Percentage = LA_Distribution[7] / targets * 100,
+         Out_Percentage = LA_Distribution[8] / targets * 100,
+         Post_Percentage = LA_Distribution[9] / targets * 100,
+         Screen_Percentage = LA_Distribution[10] / targets * 100,
+         Slant_Percentage = LA_Distribution[11] / targets * 100,
+         Wheel_Percentage = LA_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+Seattle_Routes <- Teams_Targets |>
+  filter(possession_team == "SEA")
+SEA_Distribution <- table(Seattle_Routes$route_of_targeted_receiver)
+
+Seahawks_Routes <- Seattle_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = SEA_Distribution[1] / targets * 100,
+         Corner_Percentage = SEA_Distribution[2] / targets * 100,
+         Cross_Percentage = SEA_Distribution[3] / targets * 100,
+         Flat_Percentage = SEA_Distribution[4] / targets * 100,
+         Go_Percentage = SEA_Distribution[5] / targets * 100,
+         Hitch_Percentage = SEA_Distribution[6] / targets * 100,
+         In_Percentage = SEA_Distribution[7] / targets * 100,
+         Out_Percentage = SEA_Distribution[8] / targets * 100,
+         Post_Percentage = SEA_Distribution[9] / targets * 100,
+         Screen_Percentage = SEA_Distribution[10] / targets * 100,
+         Slant_Percentage = SEA_Distribution[11] / targets * 100,
+         Wheel_Percentage = SEA_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+SanFrancisco_Routes <- Teams_Targets |>
+  filter(possession_team == "SF")
+SF_Distribution <- table(SanFrancisco_Routes$route_of_targeted_receiver)
+
+Niners_Routes <- SanFrancisco_Routes |>
+  distinct(possession_team, targets, average_route_separation) |>
+  mutate(Angle_Percentage = SF_Distribution[1] / targets * 100,
+         Corner_Percentage = SF_Distribution[2] / targets * 100,
+         Cross_Percentage = SF_Distribution[3] / targets * 100,
+         Flat_Percentage = SF_Distribution[4] / targets * 100,
+         Go_Percentage = SF_Distribution[5] / targets * 100,
+         Hitch_Percentage = SF_Distribution[6] / targets * 100,
+         In_Percentage = SF_Distribution[7] / targets * 100,
+         Out_Percentage = SF_Distribution[8] / targets * 100,
+         Post_Percentage = SF_Distribution[9] / targets * 100,
+         Screen_Percentage = SF_Distribution[10] / targets * 100,
+         Slant_Percentage = SF_Distribution[11] / targets * 100,
+         Wheel_Percentage = SF_Distribution[12] / targets * 100) |> 
+  slice(1)
+
+All_Teams_Route_Distribution <- rbind(Steelers_Routes, Bengals_Routes, Browns_Routes,
+                                      Ravens_Routes, Bills_Routes, Dolphins_Routes,
+                                      Patriots_Routes, Jets_Routes, Texans_Routes, Colts_Routes,
+                                      Jaguars_Routes, Titans_Routes, Broncos_Routes, 
+                                      Chiefs_Routes, Chargers_Routes, Raiders_Routes, 
+                                      Bears_Routes, Lions_Routes, Packers_Routes, Vikings_Routes,
+                                      Cowboys_Routes, Giants_Routes, Eagles_Routes, 
+                                      Commanders_Routes, Falcons_Routes, Panthers_Routes,
+                                      Saints_Routes, Buccaneers_Routes, Cardinals_Routes,
+                                      Rams_Routes, Seahawks_Routes, Niners_Routes)
+
+```
+
+```{r NFL Team Average ARS Rankings by Route}
+
+Ranked_Teams_Route_Distribution <- All_Teams_Route_Distribution |>
+  arrange(desc(average_route_separation)) |>
+  mutate(ARS_Rank = row_number()) 
+
+Ranked_Teams_Screen_Percentage <- Ranked_Teams_Route_Distribution |>
+  arrange(desc(Screen_Percentage)) |>
+  mutate(Screen_Rank = row_number())
+
+Ranked_Teams_Angle_Percentage <- Ranked_Teams_Screen_Percentage |>
+  arrange(desc(Angle_Percentage)) |>
+  mutate(Angle_Rank = row_number()) 
+
+Ranked_Teams_Flat_Percentage <- Ranked_Teams_Angle_Percentage |>
+  arrange(desc(Flat_Percentage)) |>
+  mutate(Flat_Rank = row_number()) 
+ 
+Ranked_Teams_Hitch_Percentage <- Ranked_Teams_Flat_Percentage |>
+  arrange(desc(Hitch_Percentage)) |>
+  mutate(Hitch_Rank = row_number()) 
+
+Ranked_Teams_Out_Percentage <- Ranked_Teams_Hitch_Percentage |>
+  arrange(desc(Out_Percentage)) |>
+  mutate(Out_Rank = row_number()) 
+
+Ranked_Teams_Slant_Percentage <- Ranked_Teams_Out_Percentage |>
+  arrange(desc(Slant_Percentage)) |>
+  mutate(Slant_Rank = row_number()) 
+
+Ranked_Teams_Go_Percentage <- Ranked_Teams_Slant_Percentage |>
+  arrange(desc(Go_Percentage)) |>
+  mutate(Go_Rank = row_number()) 
+
+Ranked_Teams_Cross_Percentage <- Ranked_Teams_Go_Percentage |>
+  arrange(desc(Cross_Percentage)) |>
+  mutate(Cross_Rank = row_number()) 
+
+Ranked_Teams_Wheel_Percentage <- Ranked_Teams_Cross_Percentage |>
+  arrange(desc(Wheel_Percentage)) |>
+  mutate(Wheel_Rank = row_number()) 
+
+Ranked_Teams_Post_Percentage <- Ranked_Teams_Wheel_Percentage |>
+  arrange(desc(Post_Percentage)) |>
+  mutate(Post_Rank = row_number()) 
+
+Ranked_Teams_Corner_Percentage <- Ranked_Teams_Post_Percentage |>
+  arrange(desc(Corner_Percentage)) |>
+  mutate(Corner_Rank = row_number()) 
+
+Ranked_Teams_In_Percentage <- Ranked_Teams_Corner_Percentage |>
+  arrange(desc(In_Percentage)) |>
+  mutate(In_Rank = row_number()) 
+
+Teams_Ranked <- Ranked_Teams_In_Percentage |>
+  distinct(ARS_Rank, possession_team, average_route_separation, Screen_Rank, Screen_Percentage,
+           Angle_Rank, Angle_Percentage, Flat_Rank, Flat_Percentage, In_Rank, In_Percentage) |>
+  arrange(desc(average_route_separation)) |>
+  gt() |> 
+  tab_header(title = "Team Rankings by Route Concept",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Ranked_Teams_In_Percentage$average_route_separation) |>
+  cols_label(ARS_Rank = "ARS Rank", possession_team = "Team", 
+             average_route_separation = "Average ARS", Screen_Rank = "Screen Rank",
+             Screen_Percentage = "Percent Screens", Angle_Rank = "Angle Rank",
+             Angle_Percentage = "Percent Angles", Flat_Rank = "Flat Rank", 
+             Flat_Percentage = "Percent Flats", In_Rank = "In Rank", 
+             In_Percentage = "Percent Ins") 
+  
+Teams_Ranked
+
+```
+
+## Average ARS by Route, Coverage, and Position 
+
+```{r Average Route Separation Calculations}
+
+Average_Angle <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "ANGLE")
+Angle <- mean(Average_Angle$route_separation)
+  
+Average_Corner <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "CORNER")
+Corner <- mean(Average_Corner$route_separation)
+
+Average_Cross <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "CROSS")
+Cross <- mean(Average_Cross$route_separation)
+           
+Average_Flat <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "FLAT")
+Flat <- mean(Average_Flat$route_separation)
+           
+Average_Go <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "GO")
+Go <- mean(Average_Go$route_separation)
+           
+Average_Hitch <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "HITCH")
+Hitch <- mean(Average_Hitch$route_separation)
+           
+Average_In <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "IN")
+In <- mean(Average_In$route_separation)
+
+Average_Out <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "OUT")
+Out <- mean(Average_Out$route_separation)
+          
+Average_Post <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "POST")
+Post <- mean(Average_Post$route_separation)
+
+Average_Screen <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "SCREEN")
+Screen <- mean(Average_Screen$route_separation)
+           
+Average_Slant <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "SLANT")
+Slant <- mean(Average_Slant$route_separation)
+           
+Average_Wheel <- Outlier_Free_Entire_Season |>
+  filter(route_of_targeted_receiver == "WHEEL")
+Wheel <- mean(Average_Wheel$route_separation)
+           
+Average_Cover0Man <- Outlier_Free_Entire_Season |>
+  filter(team_coverage_type == "COVER_0_MAN")
+Cover0Man <- mean(Average_Cover0Man$route_separation)
+           
+Average_Cover1Man <- Outlier_Free_Entire_Season |>
+  filter(team_coverage_type == "COVER_1_MAN")
+Cover1Man <- mean(Average_Cover1Man$route_separation)
+           
+Average_Cover2Man <- Outlier_Free_Entire_Season |>
+  filter(team_coverage_type == "COVER_2_MAN")
+Cover2Man <- mean(Average_Cover2Man$route_separation)
+           
+Average_Cover2Zone <- Outlier_Free_Entire_Season |>
+  filter(team_coverage_type == "COVER_2_ZONE")
+Cover2Zone <- mean(Average_Cover2Zone$route_separation)
+           
+Average_Cover3Zone <- Outlier_Free_Entire_Season |>
+  filter(team_coverage_type == "COVER_3_ZONE")
+Cover3Zone <- mean(Average_Cover3Zone$route_separation)
+           
+Average_Cover4Zone <- Outlier_Free_Entire_Season |>
+  filter(team_coverage_type == "COVER_4_ZONE")
+Cover4Zone <- mean(Average_Cover4Zone$route_separation)
+           
+Average_Cover6Zone <- Outlier_Free_Entire_Season |>
+  filter(team_coverage_type == "COVER_6_ZONE")
+Cover6Zone <- mean(Average_Cover6Zone$route_separation)
+ 
+Average_Prevent <- Outlier_Free_Entire_Season |>
+  filter(team_coverage_type == "PREVENT")
+Prevent <- mean(Average_Prevent$route_separation)
+
+Average_RB <- Outlier_Free_Entire_Season |>
+  filter(player_position == "RB")
+RB <- mean(Average_RB$route_separation)
+
+Average_TE <- Outlier_Free_Entire_Season |>
+  filter(player_position == "TE")
+TE <- mean(Average_TE$route_separation)
+
+Average_WR <- Outlier_Free_Entire_Season |>
+  filter(player_position == "WR")
+WR <- mean(Average_WR$route_separation)
+
+Route_Averages <- data.frame(
+  Route = c("ANGLE", "CORNER", "CROSS", "FLAT", "GO", "HITCH", "IN", "OUT", "POST", "SCREEN", "SLANT", "WHEEL"),
+  AverageRouteSeparation = c(Angle, Corner, Cross, Flat, Go, Hitch, In, Out, Post, Screen, Slant, Wheel) 
+)
+
+Route_Averages_Table <- Route_Averages |>
+  arrange(desc(AverageRouteSeparation)) |>
+  gt() |>
+  tab_header(title = "Average Route Separation by Route Type",
+             subtitle = "Using Data from the 2023 NFL Season") |>
+  gt_color_rows(columns = c("AverageRouteSeparation"), palette = c("red", "green"), 
+                domain = Route_Averages$AverageRouteSeparation) |>
+  cols_label(Route = "Route", AverageRouteSeparation = "Average Route Separation")
+
+Coverage_Averages <- data.frame(
+  Coverage = c("COVER_0_MAN", "COVER_1_MAN", "COVER_2_MAN", "COVER_2_ZONE", "COVER_3_ZONE", "COVER_4_ZONE", "COVER_6_ZONE", "PREVENT"),
+  AverageRouteSeparation = c(Cover0Man, Cover1Man, Cover2Man, Cover2Zone, Cover3Zone, Cover4Zone, Cover6Zone, Prevent)
+) 
+
+Coverage_Averages_Table <- Coverage_Averages |>
+  arrange(desc(AverageRouteSeparation)) |>
+  gt() |>
+  tab_header(title = "Average Route Separation by Coverage Type",
+             subtitle = "Using Data from the 2023 NFL Season") |>
+  gt_color_rows(columns = c("AverageRouteSeparation"), palette = c("red", "green"), 
+                domain = Coverage_Averages$AverageRouteSeparation) |>
+  cols_label(Coverage = "Coverage", AverageRouteSeparation = "Average Route Separation")
+
+Position_Averages <- data.frame(
+  Position = c("RB", "TE", "WR"),
+  AverageRouteSeparation = c(RB, TE, WR)
+)
+
+Position_Averages_Table <- Position_Averages |>
+  arrange(desc(AverageRouteSeparation)) |>
+  gt() |>
+  tab_header(title = "Average Route Separation by Position",
+             subtitle = "Using Data from the 2023 NFL Season") |>
+  gt_color_rows(columns = c("AverageRouteSeparation"), palette = c("red", "green"), 
+                domain = Position_Averages$AverageRouteSeparation) |>
+  cols_label(Position = "Position", AverageRouteSeparation = "Average Route Separation")
+
+Route_Averages_Table
+Coverage_Averages_Table
+Position_Averages_Table
+
+```
+
+## Investigating Average ARS for Each Route and Coverage Type
+
+```{r Angle Route Rankings}
+
+Angle_Rankings <- Angle_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Angle_Rankings <- Angle_Rankings |>
+  filter(targets > 2)
+
+hist(Angle_Rankings$average_route_separation)
+hist(Outlier_Free_Angle_Rankings$average_route_separation)
+
+Top_10_Angle_Targets <- Outlier_Free_Angle_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Angle Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 3 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Angle_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Angle_Targets
+
+```
+
+```{r Corner Route Rankings}
+
+Corner_Rankings <- Corner_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Corner_Rankings <- Corner_Rankings |>
+  filter(targets > 2)
+
+hist(Corner_Rankings$average_route_separation)
+hist(Outlier_Free_Corner_Rankings$average_route_separation)
+
+Top_10_Corner_Targets <- Outlier_Free_Corner_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Corner Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 3 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Corner_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Corner_Targets
+
+```
+
+```{r Cross Route Rankings}
+
+Cross_Rankings <- Cross_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Cross_Rankings <- Cross_Rankings |>
+  filter(targets > 5)
+
+hist(Cross_Rankings$average_route_separation)
+hist(Outlier_Free_Cross_Rankings$average_route_separation)
+
+Top_10_Cross_Targets <- Outlier_Free_Cross_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Cross Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 6 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Cross_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Cross_Targets
+
+```
+
+```{r Flat Route Rankings}
+
+Flat_Rankings <- Flat_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Flat_Rankings <- Flat_Rankings |>
+  filter(targets > 6)
+
+hist(Flat_Rankings$average_route_separation)
+hist(Outlier_Free_Flat_Rankings$average_route_separation)
+
+Top_10_Flat_Targets <- Outlier_Free_Flat_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Flat Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 7 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Flat_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Flat_Targets
+
+```
+
+```{r Go Route Rankings}
+
+Go_Rankings <- Go_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Go_Rankings <- Go_Rankings |>
+  filter(targets > 8)
+
+hist(Go_Rankings$average_route_separation)
+hist(Outlier_Free_Go_Rankings$average_route_separation)
+
+Top_10_Go_Targets <- Outlier_Free_Go_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Go Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 9 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Go_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Go_Targets
+
+```
+
+```{r Hitch Route Rankings}
+
+Hitch_Rankings <- Hitch_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Hitch_Rankings <- Hitch_Rankings |>
+  filter(targets > 12)
+
+hist(Hitch_Rankings$average_route_separation)
+hist(Outlier_Free_Hitch_Rankings$average_route_separation)
+
+Top_10_Hitch_Targets <- Outlier_Free_Hitch_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Hitch Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 13 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Hitch_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Hitch_Targets
+
+```
+
+```{r In Route Rankings}
+
+In_Rankings <- In_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_In_Rankings <- In_Rankings |>
+  filter(targets > 5)
+
+hist(In_Rankings$average_route_separation)
+hist(Outlier_Free_In_Rankings$average_route_separation)
+
+Top_10_In_Targets <- Outlier_Free_In_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on In Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 6 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_In_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_In_Targets
+
+```
+
+```{r Out Route Rankings}
+
+Out_Rankings <- Out_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Out_Rankings <- Out_Rankings |>
+  filter(targets > 11)
+
+hist(Out_Rankings$average_route_separation)
+hist(Outlier_Free_Out_Rankings$average_route_separation)
+
+Top_10_Out_Targets <- Outlier_Free_Out_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Out Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 12 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Out_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Out_Targets
+
+```
+
+```{r Post Route Rankings}
+
+Post_Rankings <- Post_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Post_Rankings <- Post_Rankings |>
+  filter(targets > 3)
+
+hist(Post_Rankings$average_route_separation)
+hist(Outlier_Free_Post_Rankings$average_route_separation)
+
+Top_10_Post_Targets <- Outlier_Free_Post_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Post Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 4 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Post_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Post_Targets
+
+```
+
+```{r Screen Route Rankings}
+
+Screen_Rankings <- Screen_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Screen_Rankings <- Screen_Rankings |>
+  filter(targets > 3)
+
+hist(Screen_Rankings$average_route_separation)
+hist(Outlier_Free_Screen_Rankings$average_route_separation)
+
+Top_10_Screen_Targets <- Outlier_Free_Screen_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 8 Targeted Receivers on Screen Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 4 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Screen_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Screen_Targets
+
+```
+
+```{r Slant Route Rankings}
+
+Slant_Rankings <- Slant_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Slant_Rankings <- Slant_Rankings |>
+  filter(targets > 4)
+
+hist(Slant_Rankings$average_route_separation)
+hist(Outlier_Free_Slant_Rankings$average_route_separation)
+
+Top_10_Slant_Targets <- Outlier_Free_Slant_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Slant Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 5 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Slant_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Slant_Targets
+
+```
+
+```{r Wheel Route Rankings}
+
+Wheel_Rankings <- Wheel_Routes |>
+  distinct(player_name, route_of_targeted_receiver, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Wheel_Rankings <- Wheel_Rankings |>
+  filter(targets > 1)
+
+hist(Wheel_Rankings$average_route_separation)
+hist(Outlier_Free_Wheel_Rankings$average_route_separation)
+
+Top_10_Wheel_Targets <- Outlier_Free_Wheel_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers on Wheel Routes",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 2 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Wheel_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Wheel_Targets
+
+```
+
+```{r Cover 0 Man Rankings}
+
+Cover0Man_Rankings <- COVER_0_MAN_Frame |>
+  distinct(player_name, team_coverage_type, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Cover0Man_Rankings <- Cover0Man_Rankings |>
+  filter(targets > 8)
+
+hist(Cover0Man_Rankings$average_route_separation)
+hist(Outlier_Free_Cover0Man_Rankings$average_route_separation)
+
+Top_10_Cover0Man_Targets <- Outlier_Free_Cover0Man_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 5 Targeted Receivers vs. Cover 0 Man",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 9 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Cover0Man_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Cover0Man_Targets
+
+```
+
+```{r Cover 1 Man Rankings}
+
+Cover1Man_Rankings <- COVER_1_MAN_Frame |>
+  distinct(player_name, team_coverage_type, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Cover1Man_Rankings <- Cover1Man_Rankings |>
+  filter(targets > 19)
+
+hist(Cover1Man_Rankings$average_route_separation)
+hist(Outlier_Free_Cover1Man_Rankings$average_route_separation)
+
+Top_10_Cover1Man_Targets <- Outlier_Free_Cover1Man_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers vs. Cover 1 Man",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 20 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Cover1Man_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Cover1Man_Targets
+
+```
+
+```{r Cover 2 Man Rankings}
+
+Cover2Man_Rankings <- COVER_2_MAN_Frame |>
+  distinct(player_name, team_coverage_type, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Cover2Man_Rankings <- Cover2Man_Rankings |>
+  filter(targets > 1)
+
+hist(Cover2Man_Rankings$average_route_separation)
+hist(Outlier_Free_Cover2Man_Rankings$average_route_separation)
+
+Top_10_Cover2Man_Targets <- Outlier_Free_Cover2Man_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers vs. Cover 2 Man",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 2 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Cover2Man_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Cover2Man_Targets
+
+```
+
+```{r Cover 2 Zone Rankings}
+
+Cover2Zone_Rankings <- COVER_2_ZONE_Frame |>
+  distinct(player_name, team_coverage_type, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Cover2Zone_Rankings <- Cover2Zone_Rankings |>
+  filter(targets > 4)
+
+hist(Cover2Zone_Rankings$average_route_separation)
+hist(Outlier_Free_Cover2Zone_Rankings$average_route_separation)
+
+Top_10_Cover2Zone_Targets <- Outlier_Free_Cover2Zone_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers vs. Cover 2 Zone",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 5 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Cover2Zone_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Cover2Zone_Targets
+
+```
+
+```{r Cover 3 Zone Rankings}
+
+Cover3Zone_Rankings <- COVER_3_ZONE_Frame |>
+  distinct(player_name, team_coverage_type, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Cover3Zone_Rankings <- Cover3Zone_Rankings |>
+  filter(targets > 19)
+
+hist(Cover3Zone_Rankings$average_route_separation)
+hist(Outlier_Free_Cover3Zone_Rankings$average_route_separation)
+
+Top_10_Cover3Zone_Targets <- Outlier_Free_Cover3Zone_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers vs. Cover 3 Zone",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 20 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Cover3Zone_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Cover3Zone_Targets
+
+```
+
+```{r Cover 4 Zone Rankings}
+
+Cover4Zone_Rankings <- COVER_4_ZONE_Frame |>
+  distinct(player_name, team_coverage_type, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Cover4Zone_Rankings <- Cover4Zone_Rankings |>
+  filter(targets > 4)
+
+hist(Cover4Zone_Rankings$average_route_separation)
+hist(Outlier_Free_Cover4Zone_Rankings$average_route_separation)
+
+Top_10_Cover4Zone_Targets <- Outlier_Free_Cover4Zone_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers vs. Cover 4 Zone",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 5 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Cover4Zone_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Cover4Zone_Targets
+
+```
+
+```{r Cover 6 Zone Rankings}
+
+Cover6Zone_Rankings <- COVER_6_ZONE_Frame |>
+  distinct(player_name, team_coverage_type, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Cover6Zone_Rankings <- Cover6Zone_Rankings |>
+  filter(targets > 9)
+
+hist(Cover6Zone_Rankings$average_route_separation)
+hist(Outlier_Free_Cover6Zone_Rankings$average_route_separation)
+
+Top_10_Cover6Zone_Targets <- Outlier_Free_Cover6Zone_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 10 Targeted Receivers vs. Cover 6 Zone",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 10 Targets") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Cover6Zone_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Cover6Zone_Targets
+
+```
+
+```{r Prevent Rankings}
+
+Prevent_Rankings <- PREVENT_Frame |>
+  distinct(player_name, team_coverage_type, targets, average_route_separation) |>
+  group_by(player_name) |>
+  slice(1) |>
+  ungroup()
+
+Outlier_Free_Prevent_Rankings <- Prevent_Rankings |>
+  filter(targets > 1)
+
+hist(Prevent_Rankings$average_route_separation)
+hist(Outlier_Free_Prevent_Rankings$average_route_separation)
+
+Top_10_Prevent_Targets <- Outlier_Free_Prevent_Rankings |>
+  distinct(player_name, average_route_separation) |>
+  arrange(desc(average_route_separation)) |>
+  slice(1:10) |>
+  gt() |>
+  tab_header(title = "Top 4 Targeted Receivers vs. Prevent",
+             subtitle = "Based on Average Route Separation in the 2023 NFL Season") |>
+  tab_footnote(footnote = "Minimum 1 Target") |> 
+  gt_color_rows(columns = c("average_route_separation"), palette = c("red", "green"), 
+                domain = Outlier_Free_Prevent_Rankings$average_route_separation) |>
+  cols_label(player_name = "Player", average_route_separation = "Average Route Separation")
+
+Top_10_Prevent_Targets
+
+```
+
+
+
